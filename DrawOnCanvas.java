@@ -1,5 +1,6 @@
 package tryingJavaFX;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -15,7 +16,7 @@ import javafx.stage.Stage;
 /**
  * @web http://java-buddy.blogspot.com/
  */
-public class DrawOnCanvas extends Application {
+public class JavaFX_DrawOnCanvas extends Application {
  
 	ColorPicker colorPicker;
     @Override
@@ -75,7 +76,11 @@ public class DrawOnCanvas extends Application {
          colorPicker.setValue(Color.BLACK);
          double canvasWidth = gc.getCanvas().getWidth();
          double canvasHeight = gc.getCanvas().getHeight();
-          
+         colorPicker.setOnAction(new EventHandler() {
+             public void handle(Event t) {
+                 gc.setStroke(colorPicker.getValue());               
+             }
+         }); 
          gc.setFill(Color.LIGHTGRAY);
          gc.setStroke(Color.BLACK);
          gc.setLineWidth(5);
