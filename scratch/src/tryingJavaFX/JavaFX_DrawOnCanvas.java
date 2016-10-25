@@ -3,6 +3,7 @@ package tryingJavaFX;
 import java.util.Collections;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -40,6 +41,9 @@ public class JavaFX_DrawOnCanvas extends Application {
 	/**Button to perform Dynamic Class Loading.*/
 	private Button dynamicload;
 
+	/**state of the current drawing mode(rectangle, line, free sketching, etc.).*/
+	private char state;
+
 	/**
 	 * Initializes the drawing enviroment.
 	 * @param primaryStage stage at which all components are appended
@@ -49,7 +53,12 @@ public class JavaFX_DrawOnCanvas extends Application {
         Canvas canvas = new Canvas(400, 400);
         final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
         initDraw(graphicsContext);
-         
+        //ABo khaled edit here allah ykrmk ...check the state for char values
+        // f for free Sketch
+        // e for ellipse
+        // l for line
+        // r for rectangles
+        // yet more will be added
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, 
                 new EventHandler<MouseEvent>(){
  
@@ -82,8 +91,6 @@ public class JavaFX_DrawOnCanvas extends Application {
  
         Group root = new Group();
         initializeButtons();
-        Image rec = new Image("file:rect.png");
-        //rectangle.setGraphic(new ImageView(rec));
         HBox hBox = new HBox();
         hBox.getChildren().add(colorPicker);
         hBox.getChildren().addAll(ellipse, line, rectangle);
@@ -103,6 +110,7 @@ public class JavaFX_DrawOnCanvas extends Application {
     	rectangle = new Button("Rectangle");
         line = new Button("Line");
         ellipse = new Button("Ellipse");
+        Image rec = new Image("file:rect.png");
         //rectangle.setLayoutY(100);
         //line.setLayoutY(100);line.setLayoutX(50);
         //ellipse.setLayoutY(100);ellipse.setLayoutX(100);
@@ -116,6 +124,26 @@ public class JavaFX_DrawOnCanvas extends Application {
         launch(args);
     }
 
+    /**
+     * set action handlers for buttons.
+     * */
+    public void buttonActions() {
+    	rectangle.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override public void handle(ActionEvent e) {
+    	        state = 'r';
+    	    }
+    	});
+    	line.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override public void handle(ActionEvent e) {
+    	        state = 'l';
+    	    }
+    	});
+    	ellipse.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override public void handle(ActionEvent e) {
+    	        state = 'e';
+    	    }
+    	});
+    }
     /**
      * sets the Color picker and the default colors for sketching.
      * @param gc the graphics content of the Scene
