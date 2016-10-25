@@ -25,7 +25,7 @@ public class JavaFX_DrawOnCanvas extends Application {
         Canvas canvas = new Canvas(400, 400);
         final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
         initDraw(graphicsContext);
-         
+        
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, 
                 new EventHandler<MouseEvent>(){
  
