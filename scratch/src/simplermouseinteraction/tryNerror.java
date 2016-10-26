@@ -28,6 +28,8 @@ public class tryNerror extends Application{
 		    r.setFill(Color.RED);
 		    v.getChildren().add(r);
 		}
+		Line l = new Line();
+		
 		Button rec = new Button("Rectangle");
 		rec.setLayoutY(300);		
 		v.getChildren().addAll(rec);

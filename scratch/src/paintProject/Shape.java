@@ -8,16 +8,8 @@ abstract public class Shape implements IShape{
 	private Color fillInColor;
 	private Color BorderColor;
 	private double borderWidth;
-	@Override
-	abstract public Color getFillInColor();
-
-	/**
-	 * sets the fill-in color of the shape.
-	 * @param color the color to be set
-	 * */
-	@Override
-	abstract public void setFillInColor(Color color);
-
+	
+	
 	/**
 	 * returns the border color.
 	 * @return the border color

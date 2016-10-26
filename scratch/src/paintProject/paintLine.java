@@ -4,34 +4,29 @@ import java.awt.Point;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineJoin;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 
-public class Line extends Polygon{
+public class paintLine extends Polygon{
 
 	private double length;
 	private double width;
 	private Point start;
 	private Point end;
 	private Color color;
-
-	/**
-	 * get fill color.
-	 * @return Color fill in color
-	 * */
-	@Override
-	public Color getFillInColor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * sets the fill-in color of the shape.
-	 * @param color the color to be set
-	 * */
-	@Override
-	public void setFillInColor(Color color) {
-		// No area to be painted
-		
+	
+	public paintLine(Point start, Point end) {
+		this.start = start;
+		this.end = end;
 	}
 
 	/**
@@ -72,11 +67,14 @@ public class Line extends Polygon{
 	/**
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
-	 * @param event the mouse event that called the draw method
 	 * */
-	@Override
-	public Canvas drawShape(Canvas current, MouseEvent event) {
-		// TODO Auto-generated method stub
-		return null;
+	public void drawShape(Pane paint) {
+		Line l = new Line();
+		l.setStartX(start.getX());
+		l.setStartY(start.getY());
+		l.setEndX(end.getX());
+		l.setEndY(end.getY());
+		paint.getChildren().add(l);
+		return;
 	}
 }

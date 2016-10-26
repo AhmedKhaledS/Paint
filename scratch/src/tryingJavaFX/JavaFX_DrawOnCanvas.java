@@ -23,9 +23,12 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import paintProject.paintLine;
  
 /**
  * @web http://java-buddy.blogspot.com/
@@ -68,6 +71,7 @@ public class JavaFX_DrawOnCanvas extends Application {
         actionsCounter = new int[NoOfButtons];
         clearActions(actionsCounter);
         //Initially as a line segment.
+        Pane paintPane = new Pane();
         state = 'f';
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, 
                 new EventHandler<MouseEvent>(){
@@ -77,11 +81,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 	            	case 'l': {
 	            		actionsCounter[0]++;
 	            		if (actionsCounter[0] > 1) {
-	            			graphicsContext.beginPath();
-	            			graphicsContext.moveTo(previous.getX(), previous.getY());
-		            		graphicsContext.lineTo(event.getX(), event.getY());
-		            		//graphicsContext.moveTo(previous.getX(), previous.getY());
-		            		graphicsContext.stroke();
+	            			Point current = new Point();
+	            			current.setLocation(event.getX(), event.getY());
+	            			paintLine currentLine = new paintLine(previous, current);
+	            			currentLine.drawShape(paintPane);
 		            		clearActions(actionsCounter);
 	            		} else {
 	            			previous = new Point();
@@ -130,7 +133,7 @@ public class JavaFX_DrawOnCanvas extends Application {
  
             @Override
             public void handle(MouseEvent event) {
-            	// free sketching mode.
+            	// free sketching mode only while free state.
             	if (state == 'f') {
             		graphicsContext.lineTo(event.getX(), event.getY());
             		graphicsContext.stroke();	
@@ -150,11 +153,12 @@ public class JavaFX_DrawOnCanvas extends Application {
         Group root = new Group();
         initializeButtons();
         buttonActions();
+        paintPane.getChildren().add(canvas);
         HBox hBox = new HBox();
         hBox.getChildren().add(colorPicker);
         hBox.getChildren().addAll(free, line, ellipse, rectangle);
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(hBox, canvas);
+        vBox.getChildren().addAll(hBox, paintPane);
         root.getChildren().addAll(vBox);
         Scene scene = new Scene(root, 400, 425);
         primaryStage.setTitle("Vector Drawing");

@@ -1,23 +1,12 @@
 package paintProject;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public interface IShape {
-
-	/**
-	 * get fill color.
-	 * @return Color fill in color
-	 * */
-	public Color getFillInColor();
-
-	/**
-	 * sets the fill-in color of the shape.
-	 * @param color the color to be set
-	 * */
-	public void setFillInColor(Color color);
-
 	/**
 	 * returns the border color.
 	 * @return the border color
@@ -45,7 +34,6 @@ public interface IShape {
 	/**
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
-	 * @param event the mouse event that called the draw method
 	 * */
-	public Canvas drawShape(Canvas current, MouseEvent event);
+	public void drawShape(Pane paint);
 }

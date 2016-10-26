@@ -4,10 +4,12 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class Ellipse extends Shape {
+public class Ellipse implements IShape {
 
 	private Color fillInColor;
 	private Color borderColor;
@@ -96,9 +98,8 @@ public class Ellipse extends Shape {
 	 * @param event the mouse event that called the draw method
 	 * */
 	@Override
-	public Canvas drawShape(Canvas current, MouseEvent event) {
+	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
-		return null;
+		return;
 	}
-
 }

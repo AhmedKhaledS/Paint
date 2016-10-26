@@ -3,7 +3,9 @@ package paintProject;
 import java.awt.geom.Point2D;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public class Square extends Rectangle {
@@ -89,8 +91,8 @@ public class Square extends Rectangle {
 	 * @param event the mouse event that called the draw method
 	 * */
 	@Override
-	public Canvas drawShape(Canvas current, MouseEvent event) {
+	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
-		return null;
+		return;
 	}
 }
