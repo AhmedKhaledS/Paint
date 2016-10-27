@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class Square extends Rectangle {
+public class Square extends PaintRectangle {
 
 	private Color fillInColor;
 	private Color borderColor;

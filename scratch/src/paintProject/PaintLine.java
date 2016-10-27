@@ -16,7 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
-public class paintLine extends Polygon{
+public class PaintLine extends Polygon{
 
 	private double length;
 	private double width;
@@ -24,7 +24,7 @@ public class paintLine extends Polygon{
 	private Point end;
 	private Color color;
 	
-	public paintLine(Point start, Point end) {
+	public PaintLine(Point start, Point end) {
 		this.start = start;
 		this.end = end;
 	}
@@ -69,12 +69,13 @@ public class paintLine extends Polygon{
 	 * @param current the canvas to which painted materials will be appended
 	 * */
 	public void drawShape(Pane paint) {
-		Line l = new Line();
-		l.setStartX(start.getX());
-		l.setStartY(start.getY());
-		l.setEndX(end.getX());
-		l.setEndY(end.getY());
-		paint.getChildren().add(l);
+		Line line = new Line();
+		line.setStartX(start.getX());
+		line.setStartY(start.getY());
+		line.setEndX(end.getX());
+		line.setEndY(end.getY());
+		//DragShape drag = new DragShape();
+		paint.getChildren().add(line);
 		return;
 	}
 }

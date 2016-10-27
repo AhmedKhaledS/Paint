@@ -7,8 +7,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
-public class Rectangle implements IShape {
+public class PaintRectangle implements IShape {
 
 	private Color fillInColor;
 	private Color borderColor;
@@ -18,7 +19,7 @@ public class Rectangle implements IShape {
 	private double width;
 	private Point2D.Double center;
 	
-	public Rectangle(double xCent, double yCent, double len, double wid) {
+	public PaintRectangle(double xCent, double yCent, double len, double wid) {
 		center = new Point2D.Double();
 		center.setLocation(xCent, yCent);
 		length = len;
@@ -101,7 +102,14 @@ public class Rectangle implements IShape {
 	 * */
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
-		
+		Rectangle rectangle = new Rectangle();
+		rectangle.setX(center.getX() - width / 2);
+		rectangle.setY(center.getY() - length / 2);
+		rectangle.setWidth(width);
+		rectangle.setHeight(length);
+		rectangle.setStroke(borderColor);
+		rectangle.setFill(Color.WHITE);
+		paint.getChildren().add(rectangle);
 	}
 
 }
