@@ -1,21 +1,26 @@
 package paintProject;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
+import java.awt.Point;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 
-public class Triangle extends Polygon{
+public class PaintTriangle extends PaintPolygon{
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
 	
-	private double side1;
-	private double side2;
-	private double side3;
+	private Point point1;
+	private Point point2;
+	private Point point3;
 
+	public PaintTriangle(Point p1, Point p2,Point p3) {
+		point1 = p1;
+		point2 = p2;
+		point3 = p3;
+	}
 	/**
 	 * get fill color.
 	 * @return Color fill in color
@@ -70,26 +75,18 @@ public class Triangle extends Polygon{
 		borderWidth = this.borderWidth;
 	}
 
-	public void setSides(double s1, double s2, double s3) {
-		side1 = s1;
-		side2 = s2;
-		side3 = s3;
-	}
-
-	public double getSide1() {
-		return side1;
-	}
-	public double getSide2() {
-		return side2;
-	}
-
-	public double getSide3() {
-		return side3;
-	}
-
-	@Override
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
+		Polygon triangle =  new Polygon();
+		triangle.getPoints().addAll(new Double[]{
+			    point1.getX(), point1.getY(),
+			    point2.getX(), point2.getY(),
+			    point3.getX(), point3.getY() });
+		triangle.setStroke(borderColor);
+		triangle.setFill(Color.WHITE);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(triangle);
+		paint.getChildren().add(triangle);
 		return;
 	}
 

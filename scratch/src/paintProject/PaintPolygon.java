@@ -3,7 +3,7 @@ package paintProject;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-abstract public class Polygon implements IShape{
+abstract public class PaintPolygon implements IShape{
 
 	/**
 	 * returns the border color.

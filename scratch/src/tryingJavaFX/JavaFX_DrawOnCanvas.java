@@ -30,8 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import paintProject.PaintLine;
-import paintProject.PaintRectangle;
+import paintProject.*;
 
 /**
  * @web http://java-buddy.blogspot.com/
@@ -48,15 +47,17 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button free;
 	/** Button to insert a new Ellipse. */
 	private Button ellipse;
+	/** Button to insert a new Triangle. */
+	private Button triangle;
 	/** Button to perform Dynamic Class Loading. */
 	private Button dynamicLoad;
-
+	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
-
+	/** point before the previous coordinates of the mouse on the canvas. */
 	private Point befPrevious;
-
+	/** array of counters of clicks made in each mode. */
 	private int[] actionsCounter;
-
+	/** number of buttons available. */
 	private final int NoOfButtons = 5;
 
 	/**
@@ -99,40 +100,62 @@ public class JavaFX_DrawOnCanvas extends Application {
 					break;
 				}
 				case 'r': {
-//					actionsCounter[1]++;
-//					if (actionsCounter[1] > 2) {
-//						graphicsContext.beginPath();
-//						graphicsContext.moveTo(previous.getX(), previous.getY());
-//						graphicsContext.lineTo(event.getX(), event.getY());
-//						graphicsContext.stroke();
-//						clearActions(actionsCounter);
-//					} else if (actionsCounter[1] > 1) {
-//						previous = new Point();
-//						previous.setLocation(event.getX(), event.getY());
-//						graphicsContext.beginPath();
-//						graphicsContext.moveTo(befPrevious.getX(), befPrevious.getY());
-//						graphicsContext.lineTo(previous.getX(), previous.getY());
-//						graphicsContext.stroke();
-//					} else {
-//						befPrevious = new Point();
-//						befPrevious.setLocation(event.getX(), event.getY());
-//					}
-//					break;
+					// actionsCounter[1]++;
+					// if (actionsCounter[1] > 2) {
+					// graphicsContext.beginPath();
+					// graphicsContext.moveTo(previous.getX(), previous.getY());
+					// graphicsContext.lineTo(event.getX(), event.getY());
+					// graphicsContext.stroke();
+					// clearActions(actionsCounter);
+					// } else if (actionsCounter[1] > 1) {
+					// previous = new Point();
+					// previous.setLocation(event.getX(), event.getY());
+					// graphicsContext.beginPath();
+					// graphicsContext.moveTo(befPrevious.getX(),
+					// befPrevious.getY());
+					// graphicsContext.lineTo(previous.getX(), previous.getY());
+					// graphicsContext.stroke();
+					// } else {
+					// befPrevious = new Point();
+					// befPrevious.setLocation(event.getX(), event.getY());
+					// }
+					// break;
 					break;
 				}
 				case 'e': {
 					actionsCounter[2]++;
 					break;
 				}
-				case 'f': {
-					previous = new Point();
-					previous.setLocation(event.getX(), event.getY());
-					break;
+				// case 'f': {
+				// previous = new Point();
+				// previous.setLocation(event.getX(), event.getY());
+				// break;
+				// }
+				case 't': {
+					actionsCounter[3]++;
+					if (actionsCounter[3] == 1) {
+						befPrevious = new Point();
+						befPrevious.setLocation(event.getX(), event.getY());
+					} else if (actionsCounter[3] == 2) {
+						previous = new Point();
+						previous.setLocation(event.getX(), event.getY());
+					} else {
+						Point last = new Point();
+						last.setLocation(event.getX(), event.getY());
+						PaintTriangle triangle = new PaintTriangle(befPrevious, previous, last);
+						triangle.setBorderColor(colorPicker.getValue());
+						triangle.drawShape(paintPane);
+						befPrevious = null;
+						previous = null;
+						actionsCounter[3] = 0;
+					}
 				}
 				default: {
 					graphicsContext.beginPath();
 					graphicsContext.moveTo(event.getX(), event.getY());
 					graphicsContext.stroke();
+					previous = new Point();
+					previous.setLocation(event.getX(), event.getY());
 					break;
 				}
 				}
@@ -152,16 +175,34 @@ public class JavaFX_DrawOnCanvas extends Application {
 					if (previous == null) {
 						previous = new Point();
 						previous.setLocation(event.getX(), event.getY());
-					} 
-//					else {
-//						graphicsContext.setLineDashes(5);
-//						graphicsContext.lineTo(previous.getX(), event.getY());
-//						graphicsContext.stroke();
-//						graphicsContext.moveTo(previous.getX(), previous.getY());
-//						graphicsContext.lineTo(previous.getY(), event.getX());
-//						graphicsContext.stroke();
-//						graphicsContext.moveTo(previous.getX(), previous.getY());
-//					}
+					}
+					// else {
+					// graphicsContext.setLineDashes(5);
+					// graphicsContext.lineTo(previous.getX(), event.getY());
+					// graphicsContext.stroke();
+					// graphicsContext.moveTo(previous.getX(), previous.getY());
+					// graphicsContext.lineTo(previous.getY(), event.getX());
+					// graphicsContext.stroke();
+					// graphicsContext.moveTo(previous.getX(), previous.getY());
+					// }
+				} else if (state == 'e') {
+					if (previous == null) {
+						previous = new Point();
+						previous.setLocation(event.getX(), event.getY());
+					}
+				} else if (state == 'l') {
+					if (previous == null) {
+						previous = new Point();
+						previous.setLocation(event.getX(), event.getY());
+					}
+				} else if (state == 't') {
+					if (befPrevious == null) {
+						befPrevious = new Point();
+						befPrevious.setLocation(event.getX(), event.getY());
+					} else if (previous == null) {
+						previous = new Point();
+						previous.setLocation(event.getX(), event.getY());
+					}
 				}
 			}
 		});
@@ -171,26 +212,65 @@ public class JavaFX_DrawOnCanvas extends Application {
 			@Override
 			public void handle(MouseEvent event) {
 				if (state == 'r') {
-					double centerX = (previous.getX() + event.getX()) / 2;
-					double centerY = (previous.getY() + event.getY()) / 2;
-					double width = Math.abs(event.getX() - previous.getX());
-					double height = Math.abs(event.getY() - previous.getY());
-					PaintRectangle rectangle;
-					rectangle = new PaintRectangle(centerX, centerY, height, width);
-					rectangle.setBorderColor(colorPicker.getValue());
-					rectangle.drawShape(paintPane);
-					previous = null;
+					if (previous != null) {
+						double centerX = (previous.getX() + event.getX()) / 2;
+						double centerY = (previous.getY() + event.getY()) / 2;
+						double width = Math.abs(event.getX() - previous.getX());
+						double height = Math.abs(event.getY() - previous.getY());
+						PaintRectangle rectangle;
+						rectangle = new PaintRectangle(centerX, centerY, height, width);
+						rectangle.setBorderColor(colorPicker.getValue());
+						rectangle.drawShape(paintPane);
+						previous = null;
+					}
+				} else if (state == 'e') {
+					if (previous != null) {
+						double centerX = previous.getX();
+						double centerY = previous.getY();
+						double minor = Math.abs(centerX - event.getX());
+						double major = Math.abs(centerY - event.getY());
+						PaintEllipse ellipse;
+						ellipse = new PaintEllipse(major, minor, centerX, centerY);
+						ellipse.setBorderColor(colorPicker.getValue());
+						ellipse.drawShape(paintPane);
+						previous = null;
+					}
+				} else if (state == 'l') {
+					if (actionsCounter[0] < 1) {
+						PaintLine line;
+						Point end = new Point();
+						end.setLocation(event.getX(), event.getY());
+						line = new PaintLine(previous, end);
+						line.drawShape(paintPane);
+						previous = null;
+					}
+				}
+				// else if (state == 't') {
+				// if (befPrevious != null && previous != null &&
+				// actionsCounter[3] != 3) {
+				// Point last = new Point();
+				// last.setLocation(event.getX(), event.getY());
+				// PaintTriangle triangle = new PaintTriangle(befPrevious,
+				// previous, last);
+				// triangle.setBorderColor(colorPicker.getValue());
+				// triangle.drawShape(paintPane);
+				// previous = null;
+				// befPrevious = null;
+				// }
+				// }
+				else if (state == 'f') {
+					graphicsContext.moveTo(event.getX(), event.getY());
 				}
 			}
 		});
 
 		Group root = new Group();
 		initializeButtons();
-		buttonActions();
+		buttonActions();	
 		paintPane.getChildren().add(canvas);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
-		hBox.getChildren().addAll(free, line, ellipse, rectangle);
+		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle);
 		VBox vBox = new VBox();
 		vBox.getChildren().addAll(hBox, paintPane);
 		root.getChildren().addAll(vBox);
@@ -218,6 +298,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		line = new Button("Line");
 		ellipse = new Button("Ellipse");
 		free = new Button("Free");
+		triangle = new Button("triangle");
 		Image rec = new Image("file:rect.png");
 		// rectangle.setLayoutY(100);
 		// line.setLayoutY(100);line.setLayoutX(50);
@@ -240,6 +321,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 			public void handle(ActionEvent e) {
 				state = 'l';
 				clearActions(actionsCounter);
+				previous = null;
 			}
 		});
 		rectangle.setOnAction(new EventHandler<ActionEvent>() {
@@ -255,6 +337,15 @@ public class JavaFX_DrawOnCanvas extends Application {
 			public void handle(ActionEvent e) {
 				state = 'e';
 				clearActions(actionsCounter);
+				previous = null;
+			}
+		});
+		triangle.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				state = 't';
+				clearActions(actionsCounter);
+				previous = null;
 			}
 		});
 	}

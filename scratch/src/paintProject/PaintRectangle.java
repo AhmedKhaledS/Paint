@@ -109,6 +109,8 @@ public class PaintRectangle implements IShape {
 		rectangle.setHeight(length);
 		rectangle.setStroke(borderColor);
 		rectangle.setFill(Color.WHITE);
+		MouseGestures mg = new MouseGestures();
+		mg.makeDraggable(rectangle);
 		paint.getChildren().add(rectangle);
 	}
 

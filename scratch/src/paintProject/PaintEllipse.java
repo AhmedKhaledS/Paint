@@ -1,28 +1,47 @@
 package paintProject;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
 
-public class Circle extends Ellipse{
-
+public class PaintEllipse implements IShape {
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	private double radius;
+	
+	private double majorAxis;
+	private double minorAxis;
+	private Point2D.Double center;
 
-	public Circle(double radius, double xCent, double yCent) {
-		super(radius * 2, radius * 2, xCent, yCent);
-	}
-	public double getRadius() {
-		return radius;
+	public PaintEllipse(double mjrAxis, double mnrAxis, double xCent, double yCent) {
+		majorAxis = mjrAxis;
+		minorAxis = mnrAxis;
+		center = new Point2D.Double();
+		center.setLocation(xCent, yCent);
+		fillInColor = Color.WHITE;
 	}
 
-	public void setRadius(double radius) {
-		this.radius = radius;
+	public double getMinorAxis() {
+		return minorAxis;
+	}
+
+	public void setMinorAxis(double minorAxis) {
+		this.minorAxis = minorAxis;
+	}
+
+	public double getMajorAxis() {
+		return majorAxis;
+	}
+
+	public void setMajorAxis(double majorAxis) {
+		this.majorAxis = majorAxis;
 	}
 
 	/**
@@ -34,10 +53,6 @@ public class Circle extends Ellipse{
 		return fillInColor;
 	}
 
-	/**
-	 * sets the fill-in color of the shape.
-	 * @param color the color to be set
-	 * */
 	public void setFillInColor(Color color) {
 		fillInColor = color;
 	}
@@ -87,6 +102,19 @@ public class Circle extends Ellipse{
 	@Override
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
-		return;
+		Ellipse ellipse = new Ellipse();
+		ellipse.setCenterX(center.getX());
+		ellipse.setCenterY(center.getY());
+		ellipse.setRadiusY(majorAxis);
+		ellipse.setRadiusX(minorAxis);
+		ellipse.setStroke(borderColor);
+		ellipse.setFill(fillInColor);
+		if (center.getY() - majorAxis <= 50) {
+			ellipse.setRadiusY(center.getY() - 50);
+			System.out.println(ellipse.getRadiusY());
+		}
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(ellipse);
+		paint.getChildren().add(ellipse);
 	}
 }

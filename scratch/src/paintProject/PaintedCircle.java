@@ -1,35 +1,28 @@
 package paintProject;
 
-import java.awt.geom.Point2D;
-
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class Square extends PaintRectangle {
+public class PaintedCircle extends PaintEllipse{
+
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	
-	private double side;
-	private Point2D.Double center;
+	private double radius;
 
-	public Square(double xCent, double yCent, double s) {
-		super(xCent, yCent, s, s);
-		center = new Point2D.Double();
-		center.setLocation(xCent, yCent);
-		side = s;
+	public PaintedCircle(double radius, double xCent, double yCent) {
+		super(radius * 2, radius * 2, xCent, yCent);
+	}
+	public double getRadius() {
+		return radius;
 	}
 
-	public double getSide() {
-		return side;
-	}
-
-	public void setSide(double side) {
-		this.side = side;
+	public void setRadius(double radius) {
+		this.radius = radius;
 	}
 
 	/**
@@ -48,6 +41,7 @@ public class Square extends PaintRectangle {
 	public void setFillInColor(Color color) {
 		fillInColor = color;
 	}
+
 
 	/**
 	 * returns the border color.

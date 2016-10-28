@@ -16,7 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
-public class PaintLine extends Polygon{
+public class PaintLine extends PaintPolygon{
 
 	private double length;
 	private double width;
@@ -74,7 +74,8 @@ public class PaintLine extends Polygon{
 		line.setStartY(start.getY());
 		line.setEndX(end.getX());
 		line.setEndY(end.getY());
-		//DragShape drag = new DragShape();
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(line);
 		paint.getChildren().add(line);
 		return;
 	}

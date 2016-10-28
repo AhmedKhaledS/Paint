@@ -1,6 +1,5 @@
 package paintProject;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import javafx.scene.canvas.Canvas;
@@ -9,37 +8,28 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class Ellipse implements IShape {
+public class PaintedSquare extends PaintRectangle {
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
 	
-	private double majorAxis;
-	private double minorAxis;
+	private double side;
 	private Point2D.Double center;
 
-	public Ellipse(double mjrAxis, double mnrAxis, double xCent, double yCent) {
-		majorAxis = mjrAxis;
-		minorAxis = mnrAxis;
+	public PaintedSquare(double xCent, double yCent, double s) {
+		super(xCent, yCent, s, s);
 		center = new Point2D.Double();
 		center.setLocation(xCent, yCent);
+		side = s;
 	}
 
-	public double getMinorAxis() {
-		return minorAxis;
+	public double getSide() {
+		return side;
 	}
 
-	public void setMinorAxis(double minorAxis) {
-		this.minorAxis = minorAxis;
-	}
-
-	public double getMajorAxis() {
-		return majorAxis;
-	}
-
-	public void setMajorAxis(double majorAxis) {
-		this.majorAxis = majorAxis;
+	public void setSide(double side) {
+		this.side = side;
 	}
 
 	/**
@@ -51,10 +41,13 @@ public class Ellipse implements IShape {
 		return fillInColor;
 	}
 
+	/**
+	 * sets the fill-in color of the shape.
+	 * @param color the color to be set
+	 * */
 	public void setFillInColor(Color color) {
 		fillInColor = color;
 	}
-
 
 	/**
 	 * returns the border color.
