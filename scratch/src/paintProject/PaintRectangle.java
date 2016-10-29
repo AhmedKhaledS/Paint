@@ -16,14 +16,14 @@ public class PaintRectangle implements IShape {
 	private double borderWidth;
 	
 	private double length;
-	private double width;
+	private double height;
 	private Point2D.Double center;
 	
 	public PaintRectangle(double xCent, double yCent, double len, double wid) {
 		center = new Point2D.Double();
 		center.setLocation(xCent, yCent);
 		length = len;
-		width = wid;
+		height = wid;
 	}
 
 	/**
@@ -44,11 +44,11 @@ public class PaintRectangle implements IShape {
 	}
 
 	public double getWidth() {
-		return width;
+		return height;
 	}
 
 	public void setWidth(double width) {
-		this.width = width;
+		this.height = width;
 	}
 
 	/**
@@ -103,14 +103,23 @@ public class PaintRectangle implements IShape {
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
 		Rectangle rectangle = new Rectangle();
-		rectangle.setX(center.getX() - width / 2);
-		rectangle.setY(center.getY() - length / 2);
-		rectangle.setWidth(width);
-		rectangle.setHeight(length);
+		rectangle.setX(center.getX() - length / 2);
+		rectangle.setY(center.getY() - height / 2);
+//		if (length + center.getX() > 699) {
+//			rectangle.setWidth(699);
+//		} else {
+//			rectangle.setWidth(length);
+//		}
+//		if (width + center.getY() > 799) {
+//			rectangle.setWidth(799);
+//		} else {
+		rectangle.setWidth(length);
+//		}
+		rectangle.setHeight(height);
 		rectangle.setStroke(borderColor);
 		rectangle.setFill(Color.WHITE);
-		MouseGestures mg = new MouseGestures();
-		mg.makeDraggable(rectangle);
+//		MouseGestures mg = new MouseGestures();
+//		mg.makeDraggable(rectangle);
 		paint.getChildren().add(rectangle);
 	}
 

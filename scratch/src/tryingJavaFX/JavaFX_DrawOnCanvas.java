@@ -72,7 +72,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
-		Canvas canvas = new Canvas(700, 700);
+		Canvas canvas = new Canvas(700, 800);
 		final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		initDraw(graphicsContext);
 
@@ -87,50 +87,20 @@ public class JavaFX_DrawOnCanvas extends Application {
 				switch (state) {
 				case 'l': {
 					actionsCounter[0]++;
-					if (actionsCounter[0] > 1) {
-						Point current = new Point();
-						current.setLocation(event.getX(), event.getY());
-						PaintLine currentLine = new PaintLine(previous, current);
-						currentLine.drawShape(paintPane);
-						clearActions(actionsCounter);
-					} else {
-						previous = new Point();
-						previous.setLocation(event.getX(), event.getY());
-					}
+					previous = new Point();
+					previous.setLocation(event.getX(), event.getY());
 					break;
 				}
 				case 'r': {
-					// actionsCounter[1]++;
-					// if (actionsCounter[1] > 2) {
-					// graphicsContext.beginPath();
-					// graphicsContext.moveTo(previous.getX(), previous.getY());
-					// graphicsContext.lineTo(event.getX(), event.getY());
-					// graphicsContext.stroke();
-					// clearActions(actionsCounter);
-					// } else if (actionsCounter[1] > 1) {
-					// previous = new Point();
-					// previous.setLocation(event.getX(), event.getY());
-					// graphicsContext.beginPath();
-					// graphicsContext.moveTo(befPrevious.getX(),
-					// befPrevious.getY());
-					// graphicsContext.lineTo(previous.getX(), previous.getY());
-					// graphicsContext.stroke();
-					// } else {
-					// befPrevious = new Point();
-					// befPrevious.setLocation(event.getX(), event.getY());
-					// }
-					// break;
+					previous = new Point();
+					previous.setLocation(event.getX(), event.getY());
 					break;
 				}
 				case 'e': {
-					actionsCounter[2]++;
+					previous = new Point();
+					previous.setLocation(event.getX(), event.getY());
 					break;
 				}
-				// case 'f': {
-				// previous = new Point();
-				// previous.setLocation(event.getX(), event.getY());
-				// break;
-				// }
 				case 't': {
 					actionsCounter[3]++;
 					if (actionsCounter[3] == 1) {
@@ -154,8 +124,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 					graphicsContext.beginPath();
 					graphicsContext.moveTo(event.getX(), event.getY());
 					graphicsContext.stroke();
-					previous = new Point();
-					previous.setLocation(event.getX(), event.getY());
+//					previous = new Point();
+//					previous.setLocation(event.getX(), event.getY());
 					break;
 				}
 				}
@@ -171,30 +141,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 				if (state == 'f') {
 					graphicsContext.lineTo(event.getX(), event.getY());
 					graphicsContext.stroke();
-				} else if (state == 'r') {
-					if (previous == null) {
-						previous = new Point();
-						previous.setLocation(event.getX(), event.getY());
-					}
-					// else {
-					// graphicsContext.setLineDashes(5);
-					// graphicsContext.lineTo(previous.getX(), event.getY());
-					// graphicsContext.stroke();
-					// graphicsContext.moveTo(previous.getX(), previous.getY());
-					// graphicsContext.lineTo(previous.getY(), event.getX());
-					// graphicsContext.stroke();
-					// graphicsContext.moveTo(previous.getX(), previous.getY());
-					// }
-				} else if (state == 'e') {
-					if (previous == null) {
-						previous = new Point();
-						previous.setLocation(event.getX(), event.getY());
-					}
-				} else if (state == 'l') {
-					if (previous == null) {
-						previous = new Point();
-						previous.setLocation(event.getX(), event.getY());
-					}
 				} else if (state == 't') {
 					if (befPrevious == null) {
 						befPrevious = new Point();
@@ -212,61 +158,74 @@ public class JavaFX_DrawOnCanvas extends Application {
 			@Override
 			public void handle(MouseEvent event) {
 				if (state == 'r') {
-					if (previous != null) {
-						double centerX = (previous.getX() + event.getX()) / 2;
-						double centerY = (previous.getY() + event.getY()) / 2;
-						double width = Math.abs(event.getX() - previous.getX());
-						double height = Math.abs(event.getY() - previous.getY());
-						PaintRectangle rectangle;
-						rectangle = new PaintRectangle(centerX, centerY, height, width);
-						rectangle.setBorderColor(colorPicker.getValue());
-						rectangle.drawShape(paintPane);
-						previous = null;
+					double centerX, centerY, length, width;
+					if (event.getX() > canvas.getWidth()) {
+						centerX = (previous.getX() + canvas.getWidth() - 3) / 2;
+							length = Math.abs(699 - previous.getX());
+					} else {
+						centerX = (previous.getX() + event.getX()) / 2;
+						length = Math.abs(event.getX() - previous.getX());
+					} if (event.getY() > canvas.getHeight()) {
+						centerY = (previous.getY() + canvas.getHeight() - 3) / 2;
+						width = Math.abs(canvas.getHeight() - previous.getY());
+						
+					} else if (event.getY() < 0){
+						centerY = (previous.getY() + 0) / 2;
+						width = Math.abs(5 - previous.getY());
+					} else {
+						centerY = (previous.getY() + event.getY()) / 2;
+						width = Math.abs(event.getY() - previous.getY());
 					}
+					PaintRectangle rectangle;
+					rectangle = new PaintRectangle(centerX, centerY, length, width);
+					rectangle.setBorderColor(colorPicker.getValue());
+					rectangle.drawShape(paintPane);
 				} else if (state == 'e') {
-					if (previous != null) {
-						double centerX = previous.getX();
-						double centerY = previous.getY();
-						double minor = Math.abs(centerX - event.getX());
-						double major = Math.abs(centerY - event.getY());
-						PaintEllipse ellipse;
-						ellipse = new PaintEllipse(major, minor, centerX, centerY);
-						ellipse.setBorderColor(colorPicker.getValue());
-						ellipse.drawShape(paintPane);
-						previous = null;
+					double centerX = 0.0, centerY = 0.0, minor = 0.0, major = 0.0;
+					if (event.getX() > canvas.getWidth()) {
+						centerX = (previous.getX() + canvas.getWidth()) / 2.0;
+					} else {
+						centerX = (previous.getX() + event.getX()) / 2.0;
 					}
+					if (event.getY() <= 0) {
+						centerY = (previous.getY() + 0) / 2.0;
+					} else if (event.getY() > canvas.getHeight()) {
+						centerY = (previous.getY() + canvas.getHeight() - 6.0) / 2.0;
+					} else {
+						centerY = (previous.getY() + event.getY()) / 2.0;
+					}
+					minor = Math.abs(previous.getY() - centerY);
+					major = Math.abs(previous.getX() - centerX);
+					PaintEllipse ellipse;
+					ellipse = new PaintEllipse(minor, major, centerX, centerY);
+					ellipse.setBorderColor(colorPicker.getValue());
+					ellipse.drawShape(paintPane);
+					previous = null;
 				} else if (state == 'l') {
-					if (actionsCounter[0] < 1) {
+					if (actionsCounter[0] > 0) {
 						PaintLine line;
 						Point end = new Point();
 						end.setLocation(event.getX(), event.getY());
 						line = new PaintLine(previous, end);
 						line.drawShape(paintPane);
+						clearActions(actionsCounter);
 						previous = null;
 					}
 				}
-				// else if (state == 't') {
-				// if (befPrevious != null && previous != null &&
-				// actionsCounter[3] != 3) {
-				// Point last = new Point();
-				// last.setLocation(event.getX(), event.getY());
-				// PaintTriangle triangle = new PaintTriangle(befPrevious,
-				// previous, last);
-				// triangle.setBorderColor(colorPicker.getValue());
-				// triangle.drawShape(paintPane);
-				// previous = null;
-				// befPrevious = null;
-				// }
-				// }
 				else if (state == 'f') {
 					graphicsContext.moveTo(event.getX(), event.getY());
 				}
 			}
 		});
+		
 
 		Group root = new Group();
 		initializeButtons();
-		buttonActions();	
+		buttonActions();
+//		paintPane.setLayoutX(canvas.getLayoutX());
+//		paintPane.setLayoutY(canvas.getLayoutY());
+//		paintPane.setMaxHeight(canvas.getHeight());
+//		paintPane.setMaxWidth(canvas.getWidth());
 		paintPane.getChildren().add(canvas);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
@@ -284,7 +243,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 * Clears the actions array.
 	 * 
 	 * @param array
-	 *            the array of actions to be cleared
+	 * the array of actions to be cleared.
 	 */
 	private void clearActions(int[] array) {
 		Arrays.fill(array, 0);

@@ -102,19 +102,11 @@ public class PaintEllipse implements IShape {
 	@Override
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
-		Ellipse ellipse = new Ellipse();
-		ellipse.setCenterX(center.getX());
-		ellipse.setCenterY(center.getY());
-		ellipse.setRadiusY(majorAxis);
-		ellipse.setRadiusX(minorAxis);
+		Ellipse ellipse = new Ellipse(center.getX(), center.getY(), minorAxis, majorAxis);
 		ellipse.setStroke(borderColor);
 		ellipse.setFill(fillInColor);
-		if (center.getY() - majorAxis <= 50) {
-			ellipse.setRadiusY(center.getY() - 50);
-			System.out.println(ellipse.getRadiusY());
-		}
-		MouseGestures drag = new MouseGestures();
-		drag.makeDraggable(ellipse);
+//		MouseGestures drag = new MouseGestures();
+//		drag.makeDraggable(ellipse);
 		paint.getChildren().add(ellipse);
 	}
 }

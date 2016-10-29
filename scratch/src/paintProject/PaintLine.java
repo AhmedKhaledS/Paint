@@ -72,10 +72,22 @@ public class PaintLine extends PaintPolygon{
 		Line line = new Line();
 		line.setStartX(start.getX());
 		line.setStartY(start.getY());
-		line.setEndX(end.getX());
-		line.setEndY(end.getY());
-		MouseGestures drag = new MouseGestures();
-		drag.makeDraggable(line);
+		// canvas boundaries..
+		if (end.getX() > 699) {
+			line.setEndX(699);
+		} else {
+			line.setEndX(end.getX());			
+		}
+		int len = (int)paint.getLayoutY();
+		if (end.getY() < 5) {
+			line.setEndY(5);
+		} else if (end.getY() > 799) {
+			line.setEndY(799);
+		} else {
+			line.setEndY(end.getY());
+		}
+//		MouseGestures drag = new MouseGestures();
+//		drag.makeDraggable(line);
 		paint.getChildren().add(line);
 		return;
 	}
