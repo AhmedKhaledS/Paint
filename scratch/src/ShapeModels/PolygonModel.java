@@ -1,15 +1,11 @@
-package paintProject;
+package ShapeModels;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-abstract public class Shape implements IShape{
+abstract public class PolygonModel implements ShapeModel{
 
-	//Will be checked yet.	
-	private Color fillInColor;
-	private Color BorderColor;
-	private double borderWidth;
-	
-	
 	/**
 	 * returns the border color.
 	 * @return the border color

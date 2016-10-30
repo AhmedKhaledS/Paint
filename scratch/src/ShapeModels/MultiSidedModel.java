@@ -1,6 +1,4 @@
-package paintProject;
-
-import java.awt.geom.Point2D;
+package ShapeModels;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,29 +6,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class PaintedSquare extends PaintRectangle {
+public class MultiSidedModel implements ShapeModel{
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	
-	private double side;
-	private Point2D.Double center;
-
-	public PaintedSquare(double xCent, double yCent, double s) {
-		super(xCent, yCent, s, s);
-		center = new Point2D.Double();
-		center.setLocation(xCent, yCent);
-		side = s;
-	}
-
-	public double getSide() {
-		return side;
-	}
-
-	public void setSide(double side) {
-		this.side = side;
-	}
 
 	/**
 	 * get fill color.
@@ -85,11 +65,6 @@ public class PaintedSquare extends PaintRectangle {
 		borderWidth = this.borderWidth;
 	}
 
-	/**
-	 * draw shape using the canvas.
-	 * @param current the canvas to which painted materials will be appended
-	 * @param event the mouse event that called the draw method
-	 * */
 	@Override
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub

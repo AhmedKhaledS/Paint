@@ -1,30 +1,26 @@
-package paintProject;
+package ShapeModels;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
+import java.awt.Point;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 
-public class PaintedCircle extends PaintEllipse{
-
+public class TriangleModel extends PolygonModel{
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	private double radius;
+	
+	private Point point1;
+	private Point point2;
+	private Point point3;
 
-	public PaintedCircle(double radius, double xCent, double yCent) {
-		super(radius * 2, radius * 2, xCent, yCent);
+	public TriangleModel(Point p1, Point p2,Point p3) {
+		point1 = p1;
+		point2 = p2;
+		point3 = p3;
 	}
-	public double getRadius() {
-		return radius;
-	}
-
-	public void setRadius(double radius) {
-		this.radius = radius;
-	}
-
 	/**
 	 * get fill color.
 	 * @return Color fill in color
@@ -79,14 +75,21 @@ public class PaintedCircle extends PaintEllipse{
 		borderWidth = this.borderWidth;
 	}
 
-	/**
-	 * draw shape using the canvas.
-	 * @param current the canvas to which painted materials will be appended
-	 * @param event the mouse event that called the draw method
-	 * */
-	@Override
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
+		Polygon triangle =  new Polygon();
+		triangle.getPoints().addAll(new Double[]{
+			    point1.getX(), point1.getY(),
+			    point2.getX(), point2.getY(),
+			    point3.getX(), point3.getY() });
+		triangle.setStroke(borderColor);
+		triangle.setFill(Color.WHITE);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(triangle);
+		paint.getChildren().add(triangle);
 		return;
 	}
+
+	
+
 }

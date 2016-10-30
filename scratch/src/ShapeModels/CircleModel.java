@@ -1,47 +1,28 @@
-package paintProject;
-
-import java.awt.Point;
-import java.awt.geom.Point2D;
+package ShapeModels;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 
-public class PaintEllipse implements IShape {
+public class CircleModel extends EllipseModel{
+
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	
-	private double majorAxis;
-	private double minorAxis;
-	private Point2D.Double center;
+	private double radius;
 
-	public PaintEllipse(double mjrAxis, double mnrAxis, double xCent, double yCent) {
-		majorAxis = mjrAxis;
-		minorAxis = mnrAxis;
-		center = new Point2D.Double();
-		center.setLocation(xCent, yCent);
-		fillInColor = Color.WHITE;
+	public CircleModel(double radius, double xCent, double yCent) {
+		super(radius * 2, radius * 2, xCent, yCent);
+	}
+	public double getRadius() {
+		return radius;
 	}
 
-	public double getMinorAxis() {
-		return minorAxis;
-	}
-
-	public void setMinorAxis(double minorAxis) {
-		this.minorAxis = minorAxis;
-	}
-
-	public double getMajorAxis() {
-		return majorAxis;
-	}
-
-	public void setMajorAxis(double majorAxis) {
-		this.majorAxis = majorAxis;
+	public void setRadius(double radius) {
+		this.radius = radius;
 	}
 
 	/**
@@ -53,6 +34,10 @@ public class PaintEllipse implements IShape {
 		return fillInColor;
 	}
 
+	/**
+	 * sets the fill-in color of the shape.
+	 * @param color the color to be set
+	 * */
 	public void setFillInColor(Color color) {
 		fillInColor = color;
 	}
@@ -102,11 +87,6 @@ public class PaintEllipse implements IShape {
 	@Override
 	public void drawShape(Pane paint) {
 		// TODO Auto-generated method stub
-		Ellipse ellipse = new Ellipse(center.getX(), center.getY(), minorAxis, majorAxis);
-		ellipse.setStroke(borderColor);
-		ellipse.setFill(fillInColor);
-//		MouseGestures drag = new MouseGestures();
-//		drag.makeDraggable(ellipse);
-		paint.getChildren().add(ellipse);
+		return;
 	}
 }

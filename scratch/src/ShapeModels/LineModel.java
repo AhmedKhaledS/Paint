@@ -1,4 +1,4 @@
-package paintProject;
+package ShapeModels;
 
 import java.awt.Point;
 
@@ -16,7 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
-public class PaintLine extends PaintPolygon{
+public class LineModel extends PolygonModel{
 
 	private double length;
 	private double width;
@@ -24,7 +24,7 @@ public class PaintLine extends PaintPolygon{
 	private Point end;
 	private Color color;
 	
-	public PaintLine(Point start, Point end) {
+	public LineModel(Point start, Point end) {
 		this.start = start;
 		this.end = end;
 	}

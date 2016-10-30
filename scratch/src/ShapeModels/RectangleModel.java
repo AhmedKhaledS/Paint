@@ -1,5 +1,6 @@
-package paintProject;
+package ShapeModels;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import javafx.scene.canvas.Canvas;
@@ -9,21 +10,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class PaintRectangle implements IShape {
+public class RectangleModel extends PolygonModel {
 
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
 	
-	private double length;
-	private double height;
-	private Point2D.Double center;
+	private Point secondPt;
+	private Point firstPt;
 	
-	public PaintRectangle(double xCent, double yCent, double len, double wid) {
-		center = new Point2D.Double();
-		center.setLocation(xCent, yCent);
-		length = len;
-		height = wid;
+	public RectangleModel(Point firstPt, Point secondPt) {
+		this.firstPt = firstPt;
+		this.secondPt = secondPt;
 	}
 
 	/**
@@ -33,22 +31,6 @@ public class PaintRectangle implements IShape {
 	public Color getFillInColor() {
 		// TODO Auto-generated method stub
 		return fillInColor;
-	}
-
-	public double getLength() {
-		return length;
-	}
-
-	public void setLength(double length) {
-		this.length = length;
-	}
-
-	public double getWidth() {
-		return height;
-	}
-
-	public void setWidth(double width) {
-		this.height = width;
 	}
 
 	/**
@@ -100,27 +82,46 @@ public class PaintRectangle implements IShape {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	public void drawShape(Pane paint) {
+	public void drawRect(Pane paint, Canvas canvas) {
 		// TODO Auto-generated method stub
 		Rectangle rectangle = new Rectangle();
-		rectangle.setX(center.getX() - length / 2);
-		rectangle.setY(center.getY() - height / 2);
-//		if (length + center.getX() > 699) {
-//			rectangle.setWidth(699);
-//		} else {
-//			rectangle.setWidth(length);
-//		}
-//		if (width + center.getY() > 799) {
-//			rectangle.setWidth(799);
-//		} else {
+		Point upperLeft = new Point();
+		double centerX, centerY, length, width;
+		if (secondPt.getX() > canvas.getWidth()) {
+			centerX = (firstPt.getX() + canvas.getWidth() - 3) / 2.0;
+			length = Math.abs(canvas.getWidth() - firstPt.getX());
+			secondPt.setLocation(canvas.getWidth(), secondPt.getY());
+		} else {
+			centerX = (firstPt.getX() + secondPt.getX()) / 2.0;
+			length = Math.abs(secondPt.getX() - firstPt.getX());
+		} if (secondPt.getY() > canvas.getHeight()) {
+			centerY = (firstPt.getY() + canvas.getHeight() - 3) / 2.0;
+			width = Math.abs(canvas.getHeight() - firstPt.getY());	
+			secondPt.setLocation(secondPt.getX(),  canvas.getHeight());
+		} else if (secondPt.getY() < 0){
+			centerY = (firstPt.getY() + 0) / 2;
+			width = Math.abs(5 - firstPt.getY());
+			secondPt.setLocation(secondPt.getX(), 5);
+		} else {
+			centerY = (firstPt.getY() + secondPt.getY()) / 2.0;
+			width = Math.abs(secondPt.getY() - firstPt.getY());
+		}
+		upperLeft.setLocation(Math.min(firstPt.getX(), secondPt.getX()), Math.min(firstPt.getY(), secondPt.getY()));
+		rectangle.setX(upperLeft.getX());
+		rectangle.setY(upperLeft.getY());
 		rectangle.setWidth(length);
-//		}
-		rectangle.setHeight(height);
+		rectangle.setHeight(width);
 		rectangle.setStroke(borderColor);
 		rectangle.setFill(Color.WHITE);
 //		MouseGestures mg = new MouseGestures();
 //		mg.makeDraggable(rectangle);
 		paint.getChildren().add(rectangle);
+	}
+
+	@Override
+	public void drawShape(Pane paint) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
