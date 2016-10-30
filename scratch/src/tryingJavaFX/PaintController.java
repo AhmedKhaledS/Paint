@@ -152,7 +152,11 @@ public class PaintController {
 					double width = Math.abs(event.getX() - previous.getX());
 					double height = Math.abs(event.getY() - previous.getY());
 					RectangleModel rectangle;
-					rectangle = new RectangleModel(centerX, centerY, height, width);
+					Point first = new Point();
+					first.setLocation(centerX,centerY);
+					Point second = new Point();
+					second.setLocation(centerX + width,centerY + height);
+					rectangle = new RectangleModel(first, second);
 					rectangle.setBorderColor(colorPicker.getValue());
 					rectangle.drawShape(paintPane);
 					previous = null;

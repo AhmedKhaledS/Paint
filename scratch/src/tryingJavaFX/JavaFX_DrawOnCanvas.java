@@ -8,10 +8,12 @@ import ShapeModels.LineModel;
 import ShapeModels.RectangleModel;
 import ShapeModels.TriangleModel;
 import javafx.application.Application;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,8 +31,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import ShapeModels.*;
 
@@ -53,6 +57,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button triangle;
 	/** Button to perform Dynamic Class Loading. */
 	private Button dynamicLoad;
+	/** Button to delete Shapes. */
+	private Button delete;
 	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
 	/** point before the previous coordinates of the mouse on the canvas. */
@@ -61,12 +67,29 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private int[] actionsCounter;
 	/** number of buttons available. */
 	private final int NoOfButtons = 5;
-	/** state of the current drawing mode(rectangle, line, free sketching, etc.). */
+	/**
+	 * state of the current drawing mode(rectangle, line, free sketching, etc.).
+	 */
 	private char state;
+	private SimpleDoubleProperty linefx;
+	private SimpleDoubleProperty linefy;
+	private SimpleDoubleProperty linesx;
+	private SimpleDoubleProperty linesy;
+	private SimpleDoubleProperty firstX, firstRX;
+	private SimpleDoubleProperty firstY, firstRY;
+	private SimpleDoubleProperty secondX, secondRX;
+	private SimpleDoubleProperty secondY, secondRY;
+	private SimpleDoubleProperty width, widthR;
+	private SimpleDoubleProperty length, lengthR;
+	private Rectangle previewRect;
+	private Line previewLine;
+	private Ellipse previewEllipse;
+
 	/**
 	 * Initializes the drawing environment.
+	 * 
 	 * @param primaryStage
-	 * stage at which all components are appended
+	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
 		Canvas canvas = new Canvas(700, 800);
@@ -89,15 +112,32 @@ public class JavaFX_DrawOnCanvas extends Application {
 					previous = new Point();
 					previous.setLocation(event.getX(), event.getY());
 					lineCtrl.setPreviousPoint(previous);
+					linefx.setValue(event.getX());
+					linefy.setValue(event.getY());
+					linesx.setValue(event.getX());
+					linesy.setValue(event.getY());
+					System.out.println(previewRect.getX() + " " + previewRect.getY());
 					break;
 				}
 				case 'r': {
+					firstRX.setValue(event.getX());
+					firstRY.setValue(event.getY());
+					secondRX.setValue(event.getX());
+					secondRY.setValue(event.getY());
+					// .setX(event.getX());
+					// previewRect.setY(event.getY());
 					previous = new Point();
 					previous.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setFirstPt(previous);
+					// System.out.println(previewRect.getX() + " " +
+					// previewRect.getY());
 					break;
 				}
 				case 'e': {
+					firstX.setValue(event.getX());
+					firstY.setValue(event.getY());
+					secondX.setValue(event.getX());
+					secondY.setValue(event.getY());
 					previous = new Point();
 					previous.setLocation(event.getX(), event.getY());
 					break;
@@ -113,12 +153,17 @@ public class JavaFX_DrawOnCanvas extends Application {
 					} else {
 						Point last = new Point();
 						last.setLocation(event.getX(), event.getY());
-						triangleCtrl.setDimensions(befPrevious,  previous, last);
+						triangleCtrl.setDimensions(befPrevious, previous, last);
 						triangleCtrl.draw(paintPane, colorPicker);
-						
+
 						befPrevious = null;
 						previous = null;
 						actionsCounter[3] = 0;
+					}
+				}
+				case 'd': {
+					if (event.getSource() instanceof Rectangle) {
+						paintPane.getChildren().remove((Node) event.getSource());
 					}
 				}
 				default: {
@@ -147,6 +192,19 @@ public class JavaFX_DrawOnCanvas extends Application {
 						previous = new Point();
 						previous.setLocation(event.getX(), event.getY());
 					}
+				} else if (state == 'l') {
+					linesx.setValue(event.getX());
+					linesy.setValue(event.getY());
+				} else if (state == 'r') {
+					secondRX.setValue(event.getX());
+					secondRY.setValue(event.getY());
+					widthR.setValue(Math.abs(secondRX.doubleValue() - firstRX.doubleValue()));
+					lengthR.setValue(Math.abs(secondRY.doubleValue() - firstRY.doubleValue()));
+				} else if (state == 'e') {
+					secondX.setValue(event.getX());
+					secondY.setValue(event.getY());
+					width.setValue(Math.abs(secondX.doubleValue() - firstX.doubleValue()));
+					length.setValue(Math.abs(secondY.doubleValue() - firstY.doubleValue()));
 				}
 			}
 		});
@@ -159,32 +217,127 @@ public class JavaFX_DrawOnCanvas extends Application {
 					current.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setLastPoint(current);
 					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker);
+					firstRX.setValue(0);
+					firstRY.setValue(0);
+					secondRX.setValue(0);
+					secondRY.setValue(0);
+					widthR.setValue(0);
+					lengthR.setValue(0);
 				} else if (state == 'e') {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					ellipseCtrl.setDimensions(previous, current);
 					ellipseCtrl.draw(paintPane, canvas, colorPicker);
+					firstX.setValue(0);
+					firstY.setValue(0);
+					secondX.setValue(0);
+					secondY.setValue(0);
+					width.setValue(0);
+					length.setValue(0);
 					previous = null;
 				} else if (state == 'l') {
 					Point end = new Point();
 					end.setLocation(event.getX(), event.getY());
 					lineCtrl.setEndPoint(end);
 					lineCtrl.drawLine(paintPane);
+					firstX.setValue(0);
+					firstY.setValue(0);
+					secondX.setValue(0);
+					secondY.setValue(0);
+					width.setValue(0);
+					length.setValue(0);
+					linefx.setValue(0);
+					linefy.setValue(0);
+					linesx.setValue(0);
+					linesy.setValue(0);
 					previous = null;
-				}
-				else if (state == 'f') {
+				} else if (state == 'f') {
 					graphicsContext.moveTo(event.getX(), event.getY());
+				} else if (state == 'd') {
+					if (event.getSource() instanceof Rectangle) {
+						paintPane.getChildren().remove((Node) event.getSource());
+					}
 				}
 			}
 		});
+		construct();
 		setCanvas(canvas, paintPane, primaryStage);
+		paintPane.getChildren().add(previewLine);
+		paintPane.getChildren().add(previewRect);
+		paintPane.getChildren().add(previewEllipse);
 	}
-	
-	
+
+	/**
+	 * sets the preview tools.
+	 */
+	private void construct() {
+		firstX = new SimpleDoubleProperty();
+		firstY = new SimpleDoubleProperty();
+		secondX = new SimpleDoubleProperty();
+		secondY = new SimpleDoubleProperty();
+		width = new SimpleDoubleProperty();
+		length = new SimpleDoubleProperty();
+		firstRX = new SimpleDoubleProperty();
+		firstRY = new SimpleDoubleProperty();
+		secondRX = new SimpleDoubleProperty();
+		secondRY = new SimpleDoubleProperty();
+		widthR = new SimpleDoubleProperty();
+		lengthR = new SimpleDoubleProperty();
+		linefy = new SimpleDoubleProperty();
+		linefx = new SimpleDoubleProperty();
+		linesx = new SimpleDoubleProperty();
+		linesy = new SimpleDoubleProperty();
+		firstX.setValue(0);
+		linefx.setValue(0);
+		firstY.setValue(0);
+		linefy.setValue(0);
+		secondX.setValue(0);
+		linesy.setValue(0);
+		secondY.setValue(0);
+		linesx.setValue(0);
+		firstRX.setValue(0);
+		firstRY.setValue(0);
+		secondRX.setValue(0);
+		secondRY.setValue(0);
+		previewRect = new Rectangle();
+		previewEllipse = new Ellipse();
+		previewLine = new Line();
+		previewLine.startXProperty().bind(linefx);
+		previewLine.startYProperty().bind(linefy);
+		previewLine.endXProperty().bind(linesx);
+		previewLine.endYProperty().bind(linesy);
+		width.setValue(0);
+		length.setValue(0);
+		widthR.setValue(0);
+		lengthR.setValue(0);
+		previewRect.setStroke(Color.BLACK);
+		previewRect.setFill(Color.WHITE);
+		previewRect.xProperty().bind(firstRX);
+		previewRect.yProperty().bind(firstRY);
+		previewRect.widthProperty().bind(widthR);
+		previewRect.heightProperty().bind(lengthR);
+		previewEllipse.centerXProperty().bind(firstX);
+		previewEllipse.centerYProperty().bind(firstY);
+		previewEllipse.radiusXProperty().bind(width);
+		previewEllipse.radiusYProperty().bind(length);
+		previewEllipse.setStroke(Color.BLACK);
+		previewEllipse.setFill(Color.WHITE);
+	}
+
+	/**
+	 * sets the canvas and other layouts for drawing.
+	 * 
+	 * @param cvs
+	 *            canvas for free sketching
+	 * @param pntPne
+	 *            pane for shapes addition
+	 * @param primaryStage
+	 *            Application Stage
+	 */
 	private void setCanvas(Canvas cvs, Pane pntPne, Stage primaryStage) {
 		Group root = new Group();
 		initializeButtons();
-		buttonActions();
+		buttonActions(cvs);
 		pntPne.getChildren().add(cvs);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
@@ -197,11 +350,12 @@ public class JavaFX_DrawOnCanvas extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+
 	/**
 	 * Clears the actions array.
 	 * 
 	 * @param array
-	 * the array of actions to be cleared.
+	 *            the array of actions to be cleared.
 	 */
 	private void clearActions(int[] array) {
 		Arrays.fill(array, 0);
@@ -216,18 +370,20 @@ public class JavaFX_DrawOnCanvas extends Application {
 		ellipse = new Button("Ellipse");
 		free = new Button("Free");
 		triangle = new Button("triangle");
+		delete = new Button("Delete");
 		Image rec = new Image("file:rect.png");
 	}
 
 	/**
 	 * sets action handlers for buttons.
 	 */
-	public void buttonActions() {
+	public void buttonActions(Canvas paint) {
 		free.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				state = 'f';
 				clearActions(actionsCounter);
+				paint.toFront();
 			}
 		});
 		line.setOnAction(new EventHandler<ActionEvent>() {
@@ -236,6 +392,12 @@ public class JavaFX_DrawOnCanvas extends Application {
 				state = 'l';
 				clearActions(actionsCounter);
 				previous = null;
+				previewLine = new Line();
+				previewLine.startXProperty().bind(linefx);
+				previewLine.startYProperty().bind(linefy);
+				previewLine.endXProperty().bind(linesx);
+				previewLine.endYProperty().bind(linesy);
+				// previewRect = null;
 			}
 		});
 		rectangle.setOnAction(new EventHandler<ActionEvent>() {
@@ -244,6 +406,13 @@ public class JavaFX_DrawOnCanvas extends Application {
 				state = 'r';
 				clearActions(actionsCounter);
 				previous = null;
+				previewRect = new Rectangle();
+				previewRect.setStroke(Color.BLACK);
+				previewRect.setFill(Color.WHITE);
+				previewRect.xProperty().bind(firstRX);
+				previewRect.yProperty().bind(firstRY);
+				previewRect.widthProperty().bind(widthR);
+				previewRect.heightProperty().bind(lengthR);
 			}
 		});
 		ellipse.setOnAction(new EventHandler<ActionEvent>() {
@@ -252,6 +421,13 @@ public class JavaFX_DrawOnCanvas extends Application {
 				state = 'e';
 				clearActions(actionsCounter);
 				previous = null;
+				previewEllipse = new Ellipse();
+				previewEllipse.centerXProperty().bind(firstX);
+				previewEllipse.centerYProperty().bind(firstY);
+				previewEllipse.radiusXProperty().bind(width);
+				previewEllipse.radiusYProperty().bind(length);
+				// previewRect = null;
+				previewLine = null;
 			}
 		});
 		triangle.setOnAction(new EventHandler<ActionEvent>() {
@@ -260,6 +436,14 @@ public class JavaFX_DrawOnCanvas extends Application {
 				state = 't';
 				clearActions(actionsCounter);
 				previous = null;
+			}
+		});
+		delete.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				state = 'd';
+				clearActions(actionsCounter);
+				paint.toBack();
 			}
 		});
 	}
@@ -295,6 +479,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 
 	/**
 	 * main method.
+	 * 
 	 * @args needed of called from outside
 	 */
 	public static void main(String[] args) {

@@ -1,5 +1,7 @@
 package ShapeModels;
 
+import java.awt.Point;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -13,9 +15,13 @@ public class CircleModel extends EllipseModel{
 	private Color borderColor;
 	private double borderWidth;
 	private double radius;
-
+	private Point firstPt;
+	private Point secondPt;
 	public CircleModel(double radius, double xCent, double yCent) {
 		super(radius * 2, radius * 2, xCent, yCent);
+	}
+	public CircleModel(Point firstPt, Point secondPt) {
+		super(firstPt, secondPt);
 	}
 	public double getRadius() {
 		return radius;

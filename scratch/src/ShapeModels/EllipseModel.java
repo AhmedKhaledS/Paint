@@ -43,6 +43,13 @@ public class EllipseModel implements ShapeModel {
 //		this.majorAxis = majorAxis;
 //	}
 
+	public EllipseModel(double d, double e, double xCent, double yCent) {
+		// TODO Auto-generated constructor stub
+		majorAxis = d;
+		minorAxis = e;
+		firstPt.setLocation(xCent, yCent);
+	}
+
 	/**
 	 * get fill color.
 	 * @return Color fill in color
