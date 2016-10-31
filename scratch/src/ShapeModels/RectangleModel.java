@@ -22,6 +22,7 @@ public class RectangleModel extends PolygonModel {
 	public RectangleModel(Point firstPt, Point secondPt) {
 		this.firstPt = firstPt;
 		this.secondPt = secondPt;
+		fillInColor = Color.TRANSPARENT;
 	}
 
 	/**
@@ -112,9 +113,9 @@ public class RectangleModel extends PolygonModel {
 		rectangle.setWidth(length);
 		rectangle.setHeight(width);
 		rectangle.setStroke(borderColor);
-		rectangle.setFill(Color.WHITE);
-//		MouseGestures mg = new MouseGestures();
-//		mg.makeDraggable(rectangle);
+		rectangle.setFill(fillInColor);
+		MouseGestures mg = new MouseGestures();
+		mg.makeDraggable(rectangle);
 		paint.getChildren().add(rectangle);
 	}
 

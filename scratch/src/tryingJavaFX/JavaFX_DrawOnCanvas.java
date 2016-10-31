@@ -71,18 +71,35 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 * state of the current drawing mode(rectangle, line, free sketching, etc.).
 	 */
 	private char state;
+	/**preview rectangle upper left X coordinate.*/
+	private SimpleDoubleProperty rectX;
+	/**preview rectangle upper left Y coordinate.*/
+	private SimpleDoubleProperty rectY;
+	/**preview line start point x coordinate.*/
 	private SimpleDoubleProperty linefx;
+	/**preview line start point y coordinate.*/
 	private SimpleDoubleProperty linefy;
+	/**preview line end point x coordinate.*/
 	private SimpleDoubleProperty linesx;
+	/**preview line end point y coordinate.*/
 	private SimpleDoubleProperty linesy;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty firstX, firstRX;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty firstY, firstRY;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty secondX, secondRX;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty secondY, secondRY;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty width, widthR;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty length, lengthR;
+	/**preview rectangle.*/
 	private Rectangle previewRect;
+	/**preview line.*/
 	private Line previewLine;
+	/**preview ellipse.*/
 	private Ellipse previewEllipse;
 
 	/**
@@ -116,7 +133,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 					linefy.setValue(event.getY());
 					linesx.setValue(event.getX());
 					linesy.setValue(event.getY());
-					System.out.println(previewRect.getX() + " " + previewRect.getY());
 					break;
 				}
 				case 'r': {
@@ -124,13 +140,11 @@ public class JavaFX_DrawOnCanvas extends Application {
 					firstRY.setValue(event.getY());
 					secondRX.setValue(event.getX());
 					secondRY.setValue(event.getY());
-					// .setX(event.getX());
-					// previewRect.setY(event.getY());
 					previous = new Point();
 					previous.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setFirstPt(previous);
-					// System.out.println(previewRect.getX() + " " +
-					// previewRect.getY());
+					rectX.setValue(event.getX());
+					rectY.setValue(event.getY());
 					break;
 				}
 				case 'e': {
@@ -198,11 +212,25 @@ public class JavaFX_DrawOnCanvas extends Application {
 				} else if (state == 'r') {
 					secondRX.setValue(event.getX());
 					secondRY.setValue(event.getY());
-					widthR.setValue(Math.abs(secondRX.doubleValue() - firstRX.doubleValue()));
-					lengthR.setValue(Math.abs(secondRY.doubleValue() - firstRY.doubleValue()));
+					if (secondRX.doubleValue() < 0) {
+						secondRX.setValue(0);
+					}
+					if (secondRY.doubleValue() < 0) {
+						secondRY.setValue(0);
+					}
+					rectX.setValue(Math.min(firstRX.doubleValue(), secondRX.doubleValue()));
+					rectY.setValue(Math.min(firstRY.doubleValue(), secondRY.doubleValue()));
+					widthR.setValue(Math.abs(firstRX.doubleValue() - secondRX.doubleValue()));
+					lengthR.setValue(Math.abs(firstRY.doubleValue() - secondRY.doubleValue()));
 				} else if (state == 'e') {
 					secondX.setValue(event.getX());
 					secondY.setValue(event.getY());
+					if (secondX.doubleValue() < 0) {
+						secondX.setValue(0);
+					}
+					if (secondY.doubleValue() < 0) {
+						secondY.setValue(0);
+					}
 					width.setValue(Math.abs(secondX.doubleValue() - firstX.doubleValue()));
 					length.setValue(Math.abs(secondY.doubleValue() - firstY.doubleValue()));
 				}
@@ -287,6 +315,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 		linefx = new SimpleDoubleProperty();
 		linesx = new SimpleDoubleProperty();
 		linesy = new SimpleDoubleProperty();
+		rectX = new SimpleDoubleProperty();
+		rectY = new SimpleDoubleProperty();
 		firstX.setValue(0);
 		linefx.setValue(0);
 		firstY.setValue(0);
@@ -295,6 +325,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 		linesy.setValue(0);
 		secondY.setValue(0);
 		linesx.setValue(0);
+		rectX.set(0);
+		rectY.set(0);
 		firstRX.setValue(0);
 		firstRY.setValue(0);
 		secondRX.setValue(0);
@@ -311,9 +343,9 @@ public class JavaFX_DrawOnCanvas extends Application {
 		widthR.setValue(0);
 		lengthR.setValue(0);
 		previewRect.setStroke(Color.BLACK);
-		previewRect.setFill(Color.WHITE);
-		previewRect.xProperty().bind(firstRX);
-		previewRect.yProperty().bind(firstRY);
+		previewRect.setFill(Color.TRANSPARENT);
+		previewRect.xProperty().bind(rectX);
+		previewRect.yProperty().bind(rectY);
 		previewRect.widthProperty().bind(widthR);
 		previewRect.heightProperty().bind(lengthR);
 		previewEllipse.centerXProperty().bind(firstX);
@@ -321,7 +353,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		previewEllipse.radiusXProperty().bind(width);
 		previewEllipse.radiusYProperty().bind(length);
 		previewEllipse.setStroke(Color.BLACK);
-		previewEllipse.setFill(Color.WHITE);
+		previewEllipse.setFill(Color.TRANSPARENT);
 	}
 
 	/**
@@ -409,8 +441,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 				previewRect = new Rectangle();
 				previewRect.setStroke(Color.BLACK);
 				previewRect.setFill(Color.WHITE);
-				previewRect.xProperty().bind(firstRX);
-				previewRect.yProperty().bind(firstRY);
+				//previewRect.xProperty().bind(firstRX);
+				//previewRect.yProperty().bind(firstRY);
 				previewRect.widthProperty().bind(widthR);
 				previewRect.heightProperty().bind(lengthR);
 			}
