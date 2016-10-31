@@ -1,6 +1,10 @@
 package tryingJavaFX;
 
 import java.awt.Point;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import ShapeModels.EllipseModel;
@@ -59,6 +63,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button dynamicLoad;
 	/** Button to delete Shapes. */
 	private Button delete;
+	/** Saves the objects drawn.*/
+	private Button save;
+	/** Loads the objects drawn.*/
+	private Button load;
 	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
 	/** point before the previous coordinates of the mouse on the canvas. */
@@ -67,6 +75,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private int[] actionsCounter;
 	/** number of buttons available. */
 	private final int NoOfButtons = 5;
+	/** Pane to draw shapes on */
+	Pane paintPane;
+	/** canvas to draw in */
+	Canvas canvas;
 	/**
 	 * state of the current drawing mode(rectangle, line, free sketching, etc.).
 	 */
@@ -92,7 +104,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
-		Canvas canvas = new Canvas(700, 800);
+		canvas = new Canvas(700, 800);
 		final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		initDraw(graphicsContext);
 		LineController lineCtrl = new LineController();
@@ -102,7 +114,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		actionsCounter = new int[NoOfButtons];
 		clearActions(actionsCounter);
 		// Initially as a line segment.
-		Pane paintPane = new Pane();
+		paintPane = new Pane();
 		state = 'f';
 		canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 			@Override
@@ -371,6 +383,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 		free = new Button("Free");
 		triangle = new Button("triangle");
 		delete = new Button("Delete");
+		save = new Button("Save");
+		load = new Button("Load");
 		Image rec = new Image("file:rect.png");
 	}
 
@@ -446,8 +460,33 @@ public class JavaFX_DrawOnCanvas extends Application {
 				paint.toBack();
 			}
 		});
-	}
+		save.setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					saveData(state, actionsCounter, previous, befPrevious);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+	}
+	public void saveData(char state, int[] counters, Point prev, Point befPrev) throws FileNotFoundException {
+		try {
+			FileOutputStream sav = new FileOutputStream("draw.sav");
+			ObjectOutputStream save =
+					new ObjectOutputStream(sav);
+			((ObjectOutput) sav).writeObject(state);
+			((ObjectOutput) sav).writeObject(counters);
+			((ObjectOutput) sav).writeObject(prev);
+			((ObjectOutput) sav).writeObject(befPrev);
+		} catch (Exception exc) {
+			throw new FileNotFoundException();
+		}
+	}
 	/**
 	 * sets the Color picker and the default colors for sketching.
 	 * 
