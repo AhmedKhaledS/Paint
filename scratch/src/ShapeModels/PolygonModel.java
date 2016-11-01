@@ -4,7 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-abstract public class PolygonModel implements ShapeModel{
+abstract public class PolygonModel implements ShapeModel {
 
 	/**
 	 * returns the border color.

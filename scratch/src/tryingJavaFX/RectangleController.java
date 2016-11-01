@@ -33,6 +33,7 @@ public class RectangleController {
 		rectangle = new RectangleModel(firstPt, lastPoint);
 		rectangle.setBorderColor(clrPkr.getValue());
 		rectangle.drawRect(pntPane, cvs, shapes);
+//		RectangleModel x = (RectangleModel) rectangle.clone();
 	}
 	
 

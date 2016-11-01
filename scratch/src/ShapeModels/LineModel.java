@@ -17,7 +17,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
-public class LineModel extends PolygonModel{
+public class LineModel extends PolygonModel {
 
 	private double length;
 	private double width;

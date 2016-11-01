@@ -13,7 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
-public class EllipseModel implements ShapeModel {
+public class EllipseModel implements ShapeModel, Cloneable {
 
 	private Color fillInColor;
 	private Color borderColor;
