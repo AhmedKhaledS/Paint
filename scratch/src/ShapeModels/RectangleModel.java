@@ -16,7 +16,7 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	
+	private Rectangle thisRectangle;
 	private Point secondPt;
 	private Point firstPt;
 	
@@ -25,7 +25,25 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 		this.secondPt = secondPt;
 		fillInColor = Color.TRANSPARENT;
 	}
-
+	
+	public void setProperties() {
+		Rectangle rectangle = new Rectangle();
+		double length, width;
+		Point upperLeft = new Point();
+		length = Math.abs(secondPt.getX() - firstPt.getX());
+		width = Math.abs(secondPt.getY() - firstPt.getY());
+		upperLeft.setLocation(Math.min(firstPt.getX(), secondPt.getX()),
+				Math.min(firstPt.getY(), secondPt.getY()));
+		rectangle.setX(upperLeft.getX());
+		rectangle.setY(upperLeft.getY());
+		rectangle.setWidth(length);
+		rectangle.setHeight(width);
+		rectangle.setStroke(borderColor);
+		rectangle.setFill(fillInColor);
+		MouseGestures mg = new MouseGestures();
+		mg.makeDraggable(rectangle);
+		thisRectangle = rectangle;
+	}
 	/**
 	 * get fill color.
 	 * @return Color fill in color
@@ -66,7 +84,6 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 	 * @return double value indicating the width color
 	 * */
 	public double getBorderWidth() {
-		// TODO Auto-generated method stub
 		return borderWidth;
 	}
 
@@ -75,8 +92,20 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 	 * @param borderWidth the value to be set as border width
 	 * */
 	public void setBorderWidth(double borderWidth) {
-		// TODO Auto-generated method stub
 		borderWidth = this.borderWidth;
+	}
+	
+	public Rectangle getClone() {
+		Rectangle clone = new Rectangle();
+		clone.setX(thisRectangle.getX());
+		clone.setY(thisRectangle.getY());
+		clone.setWidth(thisRectangle.getWidth());
+		clone.setHeight(thisRectangle.getHeight());
+		clone.setWidth(clone.getWidth());
+		clone.setHeight(clone.getHeight());
+		clone.setStroke(borderColor);
+		clone.setFill(fillInColor);
+		return clone;
 	}
 
 	/**
@@ -108,7 +137,8 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 			centerY = (firstPt.getY() + secondPt.getY()) / 2.0;
 			width = Math.abs(secondPt.getY() - firstPt.getY());
 		}
-		upperLeft.setLocation(Math.min(firstPt.getX(), secondPt.getX()), Math.min(firstPt.getY(), secondPt.getY()));
+		upperLeft.setLocation(Math.min(firstPt.getX(), secondPt.getX()),
+				Math.min(firstPt.getY(), secondPt.getY()));
 		rectangle.setX(upperLeft.getX());
 		rectangle.setY(upperLeft.getY());
 		rectangle.setWidth(length);
@@ -117,6 +147,7 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 		rectangle.setFill(fillInColor);
 		MouseGestures mg = new MouseGestures();
 		mg.makeDraggable(rectangle);
+		thisRectangle = rectangle;
 		shapes.addRectangle(rectangle);
 		paint.getChildren().add(rectangle);
 	}

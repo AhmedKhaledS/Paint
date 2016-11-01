@@ -31,6 +31,7 @@ public class RectangleController {
 	public void drawRectangle(Pane pntPane, Canvas cvs, ColorPicker clrPkr, Data shapes) {
 		RectangleModel rectangle;
 		rectangle = new RectangleModel(firstPt, lastPoint);
+//		rectangle.setProperties();
 		rectangle.setBorderColor(clrPkr.getValue());
 		rectangle.drawRect(pntPane, cvs, shapes);
 //		RectangleModel x = (RectangleModel) rectangle.clone();

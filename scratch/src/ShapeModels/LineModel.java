@@ -24,10 +24,28 @@ public class LineModel extends PolygonModel {
 	private Point start;
 	private Point end;
 	private Color color;
+	private Line thisLine;
 	
 	public LineModel(Point start, Point end) {
 		this.start = start;
 		this.end = end;
+		Line line = new Line();
+		line.setStartX(start.getX());
+		line.setStartY(start.getY());
+		// canvas boundaries..
+		if (end.getX() > 699) {
+			line.setEndX(699);
+		} else {
+			line.setEndX(end.getX());			
+		}
+		if (end.getY() < 5) {
+			line.setEndY(5);
+		} else if (end.getY() > 799) {
+			line.setEndY(799);
+		} else {
+			line.setEndY(end.getY());
+		}
+		thisLine = line;
 	}
 
 	/**
@@ -36,12 +54,10 @@ public class LineModel extends PolygonModel {
 	 * */
 	@Override
 	public Color getBorderColor() {
-		// TODO Auto-generated method stub
 		return color;
 	}
 	@Override
 	public void setBorderColor(Color color) {
-		// TODO Auto-generated method stub
 		color = this.color;
 	}
 
@@ -51,7 +67,6 @@ public class LineModel extends PolygonModel {
 	 * */
 	@Override
 	public double getBorderWidth() {
-		// TODO Auto-generated method stub
 		return width;
 	}
 
@@ -61,10 +76,17 @@ public class LineModel extends PolygonModel {
 	 * */
 	@Override
 	public void setBorderWidth(double borderWidth) {
-		// TODO Auto-generated method stub
 		width = borderWidth;
 	}
-
+	
+	public Line getClone() {
+		Line clone = new Line();
+		clone.setStartX(thisLine.getStartX());
+		clone.setStartY(thisLine.getStartY());
+		clone.setEndX(thisLine.getEndX());
+		clone.setEndY(thisLine.getEndY());
+		return clone;	
+	}
 	/**
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
@@ -79,7 +101,6 @@ public class LineModel extends PolygonModel {
 		} else {
 			line.setEndX(end.getX());			
 		}
-		int len = (int)paint.getLayoutY();
 		if (end.getY() < 5) {
 			line.setEndY(5);
 		} else if (end.getY() > 799) {
@@ -87,10 +108,11 @@ public class LineModel extends PolygonModel {
 		} else {
 			line.setEndY(end.getY());
 		}
+		thisLine = line;
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(line);
 		paint.getChildren().add(line);
-		shapes.addLine(line);
+		shapes.addLine(thisLine);
 		return;
 	}
 

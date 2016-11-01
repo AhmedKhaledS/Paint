@@ -3,6 +3,7 @@ package tryingJavaFX;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Stack;
 
 import org.json.simple.parser.ParseException;
 
@@ -37,9 +38,6 @@ import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import ShapeModels.*;
 
-/**
- * @web http://java-buddy.blogspot.com/
- */
 public class JavaFX_DrawOnCanvas extends Application {
 
 	/** Color Picker to choose colors from. */
@@ -62,12 +60,20 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button dynamicLoad;
 	/** Button to delete Shapes. */
 	private Button delete;
+	/** Button to undp.*/
+	private Button Undo;
+	/** Button for redo. */
+	private Button Redo;
 	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
 	/** point before the previous coordinates of the mouse on the canvas. */
 	private Point befPrevious;
 	/** array of counters of clicks made in each mode. */
 	private int[] actionsCounter;
+	/** Stack for normal operations.*/
+	private Stack<Data> redo;
+	/** Stack for undo operations. */
+	private Stack<Data> undo;
 	/** number of buttons available. */
 	private final int NoOfButtons = 5;
 	/** Whole data*/
@@ -120,6 +126,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
+		redo = new Stack<Data>();
 		shapes = new Data();
 		base = new Tools();
 		canvas = base.getCvs();
@@ -259,6 +266,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					current.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setLastPoint(current);
 					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes);
+					redo.push(shapes.clone());
 					firstRX.setValue(0);
 					firstRY.setValue(0);
 					secondRX.setValue(0);
@@ -282,6 +290,9 @@ public class JavaFX_DrawOnCanvas extends Application {
 					end.setLocation(event.getX(), event.getY());
 					lineCtrl.setEndPoint(end);
 					lineCtrl.drawLine(paintPane, shapes);
+					// update new line in our state(stack).
+					redo.push(shapes.clone());
+					System.out.println(redo);
 					firstX.setValue(0);
 					firstY.setValue(0);
 					secondX.setValue(0);
@@ -387,7 +398,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		pntPne.getChildren().add(cvs);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
-		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load);
+		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo);
 		VBox vBox = new VBox();
 		vBox.getChildren().addAll(hBox, pntPne);
 		root.getChildren().addAll(vBox);
@@ -419,6 +430,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 		delete = new Button("Delete");
 		save = new Button("Save");
 		load = new Button("Load");
+		Undo = new Button("Undo");
+		Redo = new Button("Redo");
 		Image rec = new Image("file:rect.png");
 	}
 
