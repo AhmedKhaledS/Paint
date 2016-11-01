@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 
+import tryingJavaFX.Data;
+import tryingJavaFX.EllipseController;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +26,7 @@ public class EllipseModel implements ShapeModel {
 	public EllipseModel(Point firstPt, Point secondPt) {
 		this.firstPt = firstPt;
 		this.secondPt = secondPt;
-		fillInColor = Color.WHITE;
+		fillInColor = Color.TRANSPARENT;
 	}
 
 //	public double getMinorAxis() {
@@ -105,29 +107,18 @@ public class EllipseModel implements ShapeModel {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	public void drawEllipse(Pane paint, Canvas canvas) {
-		double centerX = 0.0, centerY = 0.0, minor = 0.0, major = 0.0;
-		if (secondPt.getX() > canvas.getWidth()) {
-			centerX = (firstPt.getX() + canvas.getWidth()) / 2.0;
-		} else {
-			centerX = (firstPt.getX() + secondPt.getX()) / 2.0;
-		}
-		if (secondPt.getY() <= 0) {
-			centerY = (firstPt.getY() + 0) / 2.0;
-		} else if (secondPt.getY() > canvas.getHeight()) {
-			centerY = (firstPt.getY() + canvas.getHeight() - 6.0) / 2.0;
-		} else {
-			centerY = (firstPt.getY() + secondPt.getY()) / 2.0;
-		}
-		minor = Math.abs(firstPt.getY() - centerY);
-		major = Math.abs(firstPt.getX() - centerX);
-		
-		
-		Ellipse ellipse = new Ellipse(centerX, centerY, major, minor);
+	public void drawEllipse(Pane paint, Canvas canvas, Data shapes) {
+		Point modifiedPoint = new Point();
+		modifiedPoint.setLocation(Math.max(0, secondPt.getX()), Math.max(0, secondPt.getY()));
+		secondPt.setLocation(modifiedPoint);
+		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
+		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());
+		Ellipse ellipse = new Ellipse(firstPt.getX(), firstPt.getY(), majorAxis, minorAxis);
 		ellipse.setStroke(borderColor);
 		ellipse.setFill(fillInColor);
-//		MouseGestures drag = new MouseGestures();
-//		drag.makeDraggable(ellipse);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(ellipse);
+		shapes.addEllipse(ellipse);
 		paint.getChildren().add(ellipse);
 	}
 

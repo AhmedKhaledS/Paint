@@ -28,11 +28,11 @@ public class RectangleController {
 		this.firstPt = firstPt;
 	}
 	
-	public void drawRectangle(Pane pntPane, Canvas cvs, ColorPicker clrPkr) {
+	public void drawRectangle(Pane pntPane, Canvas cvs, ColorPicker clrPkr, Data shapes) {
 		RectangleModel rectangle;
 		rectangle = new RectangleModel(firstPt, lastPoint);
 		rectangle.setBorderColor(clrPkr.getValue());
-		rectangle.drawRect(pntPane, cvs);
+		rectangle.drawRect(pntPane, cvs, shapes);
 	}
 	
 

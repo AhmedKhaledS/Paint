@@ -9,8 +9,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import tryingJavaFX.Data;
 
-public class RectangleModel extends PolygonModel {
+public class RectangleModel extends PolygonModel implements Cloneable {
 
 	private Color fillInColor;
 	private Color borderColor;
@@ -22,6 +23,7 @@ public class RectangleModel extends PolygonModel {
 	public RectangleModel(Point firstPt, Point secondPt) {
 		this.firstPt = firstPt;
 		this.secondPt = secondPt;
+		fillInColor = Color.TRANSPARENT;
 	}
 
 	/**
@@ -82,7 +84,7 @@ public class RectangleModel extends PolygonModel {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	public void drawRect(Pane paint, Canvas canvas) {
+	public void drawRect(Pane paint, Canvas canvas, Data shapes) {
 		// TODO Auto-generated method stub
 		Rectangle rectangle = new Rectangle();
 		Point upperLeft = new Point();
@@ -112,9 +114,10 @@ public class RectangleModel extends PolygonModel {
 		rectangle.setWidth(length);
 		rectangle.setHeight(width);
 		rectangle.setStroke(borderColor);
-		rectangle.setFill(Color.WHITE);
-//		MouseGestures mg = new MouseGestures();
-//		mg.makeDraggable(rectangle);
+		rectangle.setFill(fillInColor);
+		MouseGestures mg = new MouseGestures();
+		mg.makeDraggable(rectangle);
+		shapes.addRectangle(rectangle);
 		paint.getChildren().add(rectangle);
 	}
 

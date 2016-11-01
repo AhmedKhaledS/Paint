@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineJoin;
+import tryingJavaFX.Data;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -68,7 +69,7 @@ public class LineModel extends PolygonModel{
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
 	 * */
-	public void drawShape(Pane paint) {
+	public void drawShape(Pane paint, Data shapes) {
 		Line line = new Line();
 		line.setStartX(start.getX());
 		line.setStartY(start.getY());
@@ -86,9 +87,16 @@ public class LineModel extends PolygonModel{
 		} else {
 			line.setEndY(end.getY());
 		}
-//		MouseGestures drag = new MouseGestures();
-//		drag.makeDraggable(line);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(line);
 		paint.getChildren().add(line);
+		shapes.addLine(line);
 		return;
+	}
+
+	@Override
+	public void drawShape(Pane paint) {
+		// TODO Auto-generated method stub
+		
 	}
 }

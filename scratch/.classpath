@@ -6,5 +6,7 @@
 			<accessrule kind="accessible" pattern="javafx/**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Ahmed Khaled/Downloads/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Ahmed Khaled/Downloads/gson-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

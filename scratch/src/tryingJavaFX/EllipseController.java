@@ -15,10 +15,10 @@ public class EllipseController {
 		this.startPoint = startPoint;
 		this.endPoint = endPoint;
 	}
-	public void draw(Pane pntPane, Canvas cvs, ColorPicker colorPicker) {
+	public void draw(Pane pntPane, Canvas cvs, ColorPicker colorPicker, Data shapes) {
 		EllipseModel ellipse;
 		ellipse = new EllipseModel(startPoint, endPoint);
 		ellipse.setBorderColor(colorPicker.getValue());
-		ellipse.drawEllipse(pntPane, cvs);
+		ellipse.drawEllipse(pntPane, cvs, shapes);
 	}
 }

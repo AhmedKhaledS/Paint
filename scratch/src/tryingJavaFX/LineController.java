@@ -26,8 +26,8 @@ public class LineController {
 		this.startPoint = previousPoint;
 	}
 	
-	public void drawLine(Pane paintPane) {
+	public void drawLine(Pane paintPane, Data shapes) {
 		LineModel line = new LineModel(startPoint, endPoint);
-		line.drawShape(paintPane);
+		line.drawShape(paintPane, shapes);
 	}
 }

@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public interface ShapeModel {
+public interface ShapeModel extends Cloneable{
 	/**
 	 * returns the border color.
 	 * @return the border color

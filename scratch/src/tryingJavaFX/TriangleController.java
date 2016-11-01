@@ -14,9 +14,9 @@ public class TriangleController {
 		this.secondPoint = secondPoint;
 		this.thirdPoint = thirdPoint;
 	}
-	public void draw(Pane pntPane,ColorPicker colorPicker) {
+	public void draw(Pane pntPane,ColorPicker colorPicker, Data shapes) {
 		TriangleModel triangle = new TriangleModel(firstPoint, secondPoint, thirdPoint);
 		triangle.setBorderColor(colorPicker.getValue());
-		triangle.drawShape(pntPane);
+		triangle.drawShape(pntPane, shapes);
 	}
 }

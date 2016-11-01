@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class CircleModel extends EllipseModel{
+public class CircleModel extends EllipseModel {
 
 
 	private Color fillInColor;

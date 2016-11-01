@@ -5,6 +5,7 @@ import java.awt.Point;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import tryingJavaFX.Data;
 
 public class TriangleModel extends PolygonModel{
 
@@ -75,8 +76,7 @@ public class TriangleModel extends PolygonModel{
 		borderWidth = this.borderWidth;
 	}
 
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
+	public void drawShape(Pane paint, Data shapes) {
 		Polygon triangle =  new Polygon();
 		triangle.getPoints().addAll(new Double[]{
 			    point1.getX(), point1.getY(),
@@ -86,8 +86,14 @@ public class TriangleModel extends PolygonModel{
 		triangle.setFill(Color.WHITE);
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(triangle);
+		shapes.addTriangle(triangle);
 		paint.getChildren().add(triangle);
 		return;
+	}
+	@Override
+	public void drawShape(Pane paint) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

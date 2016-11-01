@@ -1,16 +1,11 @@
 package tryingJavaFX;
 
 import java.awt.Point;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
-import ShapeModels.EllipseModel;
-import ShapeModels.LineModel;
-import ShapeModels.RectangleModel;
-import ShapeModels.TriangleModel;
+import org.json.simple.parser.ParseException;
+
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
@@ -59,14 +54,14 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button ellipse;
 	/** Button to insert a new Triangle. */
 	private Button triangle;
+	/** Button to save current architecture */
+	private Button save;
+	/** Button to load saved architecture */
+	private Button load;
 	/** Button to perform Dynamic Class Loading. */
 	private Button dynamicLoad;
 	/** Button to delete Shapes. */
 	private Button delete;
-	/** Saves the objects drawn.*/
-	private Button save;
-	/** Loads the objects drawn.*/
-	private Button load;
 	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
 	/** point before the previous coordinates of the mouse on the canvas. */
@@ -75,28 +70,49 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private int[] actionsCounter;
 	/** number of buttons available. */
 	private final int NoOfButtons = 5;
-	/** Pane to draw shapes on */
-	Pane paintPane;
-	/** canvas to draw in */
-	Canvas canvas;
+	/** Whole data*/
+	private Data shapes;
 	/**
 	 * state of the current drawing mode(rectangle, line, free sketching, etc.).
 	 */
 	private char state;
+	/**preview rectangle upper left X coordinate.*/
+	private SimpleDoubleProperty rectX;
+	/**preview rectangle upper left Y coordinate.*/
+	private SimpleDoubleProperty rectY;
+	/**preview line start point x coordinate.*/
 	private SimpleDoubleProperty linefx;
+	/**preview line start point y coordinate.*/
 	private SimpleDoubleProperty linefy;
+	/**preview line end point x coordinate.*/
 	private SimpleDoubleProperty linesx;
+	/**preview line end point y coordinate.*/
 	private SimpleDoubleProperty linesy;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty firstX, firstRX;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty firstY, firstRY;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty secondX, secondRX;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty secondY, secondRY;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty width, widthR;
+	/**preview shapes movable values.*/
 	private SimpleDoubleProperty length, lengthR;
+	/**preview rectangle.*/
 	private Rectangle previewRect;
+	/**preview line.*/
 	private Line previewLine;
+	/**preview ellipse.*/
 	private Ellipse previewEllipse;
-
+	/** required for I/O operations.*/
+	private DataManipulation data;
+	/** Pane to draw shapes on.*/
+	private Pane paintPane;
+	/** Canvas to draw on. */
+	private Canvas canvas;
+	private Tools base;
 	/**
 	 * Initializes the drawing environment.
 	 * 
@@ -104,8 +120,12 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
-		canvas = new Canvas(700, 800);
+		shapes = new Data();
+		base = new Tools();
+		canvas = base.getCvs();
 		final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+		paintPane = base.getPane();
+		colorPicker = base.getColorPicker();
 		initDraw(graphicsContext);
 		LineController lineCtrl = new LineController();
 		RectangleController rectangleCtrl = new RectangleController();
@@ -114,7 +134,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 		actionsCounter = new int[NoOfButtons];
 		clearActions(actionsCounter);
 		// Initially as a line segment.
-		paintPane = new Pane();
 		state = 'f';
 		canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 			@Override
@@ -128,7 +147,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 					linefy.setValue(event.getY());
 					linesx.setValue(event.getX());
 					linesy.setValue(event.getY());
-					System.out.println(previewRect.getX() + " " + previewRect.getY());
 					break;
 				}
 				case 'r': {
@@ -136,13 +154,11 @@ public class JavaFX_DrawOnCanvas extends Application {
 					firstRY.setValue(event.getY());
 					secondRX.setValue(event.getX());
 					secondRY.setValue(event.getY());
-					// .setX(event.getX());
-					// previewRect.setY(event.getY());
 					previous = new Point();
 					previous.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setFirstPt(previous);
-					// System.out.println(previewRect.getX() + " " +
-					// previewRect.getY());
+					rectX.setValue(event.getX());
+					rectY.setValue(event.getY());
 					break;
 				}
 				case 'e': {
@@ -166,8 +182,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 						Point last = new Point();
 						last.setLocation(event.getX(), event.getY());
 						triangleCtrl.setDimensions(befPrevious, previous, last);
-						triangleCtrl.draw(paintPane, colorPicker);
-
+						triangleCtrl.draw(paintPane, colorPicker, shapes);
+						
 						befPrevious = null;
 						previous = null;
 						actionsCounter[3] = 0;
@@ -210,11 +226,25 @@ public class JavaFX_DrawOnCanvas extends Application {
 				} else if (state == 'r') {
 					secondRX.setValue(event.getX());
 					secondRY.setValue(event.getY());
-					widthR.setValue(Math.abs(secondRX.doubleValue() - firstRX.doubleValue()));
-					lengthR.setValue(Math.abs(secondRY.doubleValue() - firstRY.doubleValue()));
+					if (secondRX.doubleValue() < 0) {
+						secondRX.setValue(0);
+					}
+					if (secondRY.doubleValue() < 0) {
+						secondRY.setValue(0);
+					}
+					rectX.setValue(Math.min(firstRX.doubleValue(), secondRX.doubleValue()));
+					rectY.setValue(Math.min(firstRY.doubleValue(), secondRY.doubleValue()));
+					widthR.setValue(Math.abs(firstRX.doubleValue() - secondRX.doubleValue()));
+					lengthR.setValue(Math.abs(firstRY.doubleValue() - secondRY.doubleValue()));
 				} else if (state == 'e') {
 					secondX.setValue(event.getX());
 					secondY.setValue(event.getY());
+					if (secondX.doubleValue() < 0) {
+						secondX.setValue(0);
+					}
+					if (secondY.doubleValue() < 0) {
+						secondY.setValue(0);
+					}
 					width.setValue(Math.abs(secondX.doubleValue() - firstX.doubleValue()));
 					length.setValue(Math.abs(secondY.doubleValue() - firstY.doubleValue()));
 				}
@@ -228,7 +258,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setLastPoint(current);
-					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker);
+					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes);
 					firstRX.setValue(0);
 					firstRY.setValue(0);
 					secondRX.setValue(0);
@@ -239,7 +269,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					ellipseCtrl.setDimensions(previous, current);
-					ellipseCtrl.draw(paintPane, canvas, colorPicker);
+					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes);
 					firstX.setValue(0);
 					firstY.setValue(0);
 					secondX.setValue(0);
@@ -251,7 +281,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point end = new Point();
 					end.setLocation(event.getX(), event.getY());
 					lineCtrl.setEndPoint(end);
-					lineCtrl.drawLine(paintPane);
+					lineCtrl.drawLine(paintPane, shapes);
 					firstX.setValue(0);
 					firstY.setValue(0);
 					secondX.setValue(0);
@@ -299,6 +329,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 		linefx = new SimpleDoubleProperty();
 		linesx = new SimpleDoubleProperty();
 		linesy = new SimpleDoubleProperty();
+		rectX = new SimpleDoubleProperty();
+		rectY = new SimpleDoubleProperty();
 		firstX.setValue(0);
 		linefx.setValue(0);
 		firstY.setValue(0);
@@ -307,6 +339,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 		linesy.setValue(0);
 		secondY.setValue(0);
 		linesx.setValue(0);
+		rectX.set(0);
+		rectY.set(0);
 		firstRX.setValue(0);
 		firstRY.setValue(0);
 		secondRX.setValue(0);
@@ -323,9 +357,9 @@ public class JavaFX_DrawOnCanvas extends Application {
 		widthR.setValue(0);
 		lengthR.setValue(0);
 		previewRect.setStroke(Color.BLACK);
-		previewRect.setFill(Color.WHITE);
-		previewRect.xProperty().bind(firstRX);
-		previewRect.yProperty().bind(firstRY);
+		previewRect.setFill(Color.TRANSPARENT);
+		previewRect.xProperty().bind(rectX);
+		previewRect.yProperty().bind(rectY);
 		previewRect.widthProperty().bind(widthR);
 		previewRect.heightProperty().bind(lengthR);
 		previewEllipse.centerXProperty().bind(firstX);
@@ -333,7 +367,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		previewEllipse.radiusXProperty().bind(width);
 		previewEllipse.radiusYProperty().bind(length);
 		previewEllipse.setStroke(Color.BLACK);
-		previewEllipse.setFill(Color.WHITE);
+		previewEllipse.setFill(Color.TRANSPARENT);
 	}
 
 	/**
@@ -353,7 +387,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		pntPne.getChildren().add(cvs);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
-		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle);
+		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load);
 		VBox vBox = new VBox();
 		vBox.getChildren().addAll(hBox, pntPne);
 		root.getChildren().addAll(vBox);
@@ -423,8 +457,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 				previewRect = new Rectangle();
 				previewRect.setStroke(Color.BLACK);
 				previewRect.setFill(Color.WHITE);
-				previewRect.xProperty().bind(firstRX);
-				previewRect.yProperty().bind(firstRY);
+				//previewRect.xProperty().bind(firstRX);
+				//previewRect.yProperty().bind(firstRY);
 				previewRect.widthProperty().bind(widthR);
 				previewRect.heightProperty().bind(lengthR);
 			}
@@ -460,33 +494,34 @@ public class JavaFX_DrawOnCanvas extends Application {
 				paint.toBack();
 			}
 		});
-		save.setOnAction(new EventHandler<ActionEvent>() {
+//		save.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//				data = new DataManipulation();
+////				data.saveXML(base);
+//				try {
+//					data.saveJSON(canvas, paintPane, colorPicker, shapes);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//		});
+//		load.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//				try {
+//					data.loadJSON(canvas, paintPane, colorPicker);
+//				} catch (ParseException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//		});
+	}
 
-			@Override
-			public void handle(ActionEvent event) {
-				try {
-					saveData(state, actionsCounter, previous, befPrevious);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-				
-			}
-			
-		});
-	}
-	public void saveData(char state, int[] counters, Point prev, Point befPrev) throws FileNotFoundException {
-		try {
-			FileOutputStream sav = new FileOutputStream("draw.sav");
-			ObjectOutputStream save =
-					new ObjectOutputStream(sav);
-			((ObjectOutput) sav).writeObject(state);
-			((ObjectOutput) sav).writeObject(counters);
-			((ObjectOutput) sav).writeObject(prev);
-			((ObjectOutput) sav).writeObject(befPrev);
-		} catch (Exception exc) {
-			throw new FileNotFoundException();
-		}
-	}
 	/**
 	 * sets the Color picker and the default colors for sketching.
 	 * 
@@ -494,7 +529,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            the graphics content of the Scene
 	 */
 	private void initDraw(GraphicsContext gc) {
-		colorPicker = new ColorPicker();
+//		colorPicker = new ColorPicker();
 		colorPicker.setValue(Color.BLACK);
 		double canvasWidth = gc.getCanvas().getWidth();
 		double canvasHeight = gc.getCanvas().getHeight();
@@ -515,14 +550,11 @@ public class JavaFX_DrawOnCanvas extends Application {
 		gc.setStroke(colorPicker.getValue());
 		gc.setLineWidth(1);
 	}
-
 	/**
 	 * main method.
-	 * 
 	 * @args needed of called from outside
 	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
-
 }
