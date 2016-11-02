@@ -7,7 +7,7 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
-import org.json.simple.parser.ParseException;
+//import org.json.simple.parser.ParseException;
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -82,6 +82,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private boolean undoPressed;
 	private boolean operationAfterRedo;
 	private boolean redoPressed;
+	public boolean deletePressed;
 
 	/** Whole data*/
 	private Data shapes;
@@ -133,6 +134,12 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
+		try {
+			Class.forName("tryingJavaFX.Data");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		redo = new Stack<Data>();
 		undo = new Stack<Data>();
 		shapes = new Data();
@@ -457,18 +464,20 @@ public class JavaFX_DrawOnCanvas extends Application {
 		pntPne.getChildren().add(cvs);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
-		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo);
+		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo, delete);
 		VBox vBox = new VBox();
 		vBox.getChildren().addAll(hBox, pntPne);
 		root.getChildren().addAll(vBox);
 		Scene scene = new Scene(root, 700, 725);
 		primaryStage.setTitle("Vector Drawing");
 		primaryStage.setScene(scene);
+		primaryStage.setMaximized(true);
 		primaryStage.show();
 	}
 
 	/**
-	 * Clears the actions array.
+	 
+* Clears the actions array.
 	 * 
 	 * @param array
 	 *            the array of actions to be cleared.
@@ -487,6 +496,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		free = new Button("Free");
 		triangle = new Button("triangle");
 		delete = new Button("Delete");
+		deletePressed = true;
 		save = new Button("Save");
 		load = new Button("Load");
 		Undo = new Button("Undo");
@@ -562,8 +572,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				state = 'd';
-				clearActions(actionsCounter);
-				paint.toBack();
+				deletePressed = true;
+				System.out.println(deletePressed);
 			}
 		});
 		Undo.setOnAction(new EventHandler<ActionEvent>() {
@@ -590,7 +600,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					}
 					shapes.updatePane(paintPane);
 				} else {
-					JOptionPane.showMessageDialog(null, "Nothing to be undoed!",
+					JOptionPane.showMessageDialog(null, "Nothing to be undone!",
 							 "Undo error!",
 							 JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -612,7 +622,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					}
 					shapes.updatePane(paintPane);
 				} else {
-					JOptionPane.showMessageDialog(null, "Nothing to be redoed!",
+					JOptionPane.showMessageDialog(null, "Nothing to be redone!",
 							 "Redo error!",
 							 JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -646,6 +656,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 //		});
 	}
 
+	public Check getDeleteStatus() {
+		//System.out.println(deletePressed);
+		return new Check(deletePressed, paintPane);
+	}
 	/**
 	 * sets the Color picker and the default colors for sketching.
 	 * 

@@ -17,10 +17,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import com.google.gson.Gson;
+//import org.json.simple.JSONObject;
+//import org.json.simple.parser.JSONParser;
+//
+//import com.google.gson.Gson;
 
 public class DataManipulation {
 	
@@ -76,15 +76,15 @@ public class DataManipulation {
 		
 		
 	}
-	public void saveJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes) throws IOException {
-		Gson gson = new Gson();
-		ColorPicker clr = picker;
-		String json = gson.toJson(clr);
-		System.out.println(json);
-		gson.toJson(clr, new FileWriter("D:\\file.json"));
-	}
-	public void loadJSON(Canvas cvs, Pane pane, ColorPicker picker)
-			throws org.json.simple.parser.ParseException {
-
-	}
+//	public void saveJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes) throws IOException {
+//		Gson gson = new Gson();
+//		ColorPicker clr = picker;
+//		String json = gson.toJson(clr);
+//		System.out.println(json);
+//		gson.toJson(clr, new FileWriter("D:\\file.json"));
+//	}
+//	public void loadJSON(Canvas cvs, Pane pane, ColorPicker picker)
+//			throws org.json.simple.parser.ParseException {
+//
+//	}
 }

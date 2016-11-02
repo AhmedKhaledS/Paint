@@ -110,10 +110,11 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @param event the mouse event that called the draw method
 	 * */
 	public void drawEllipse(Pane paint, Canvas canvas, Data shapes) {
+		//handling the ellipse going out of the canvas
 		Point modifiedPoint = new Point();
-		secondPt = new Point();
-		modifiedPoint.setLocation(Math.max(0, secondPt.getX()),
+		modifiedPoint.setLocation(Math.max(0.0, secondPt.getX()),
 				Math.max(0, secondPt.getY()));
+		secondPt = new Point();
 		secondPt.setLocation(modifiedPoint);
 		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
 		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());

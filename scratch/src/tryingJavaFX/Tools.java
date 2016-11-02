@@ -17,7 +17,7 @@ public class Tools {
 	private Pane pane;
 	private ColorPicker colorPicker;
 	Tools() {
-		cvs = new Canvas(700, 800);
+		cvs = new Canvas(700, 600);
 		pane = new Pane();
 		colorPicker = new ColorPicker();
 	}

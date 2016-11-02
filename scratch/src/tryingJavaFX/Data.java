@@ -24,7 +24,7 @@ public class Data implements Cloneable {
 	private Double CanvasWidth;
 	private Double CanvasHeight;
 	
-	Data() {
+	public Data() {
 		rectangles = new ArrayList<Rectangle>();
 		triangles = new ArrayList<Polygon>();
 		ellipses = new ArrayList<Ellipse>();
@@ -93,10 +93,10 @@ public class Data implements Cloneable {
 			first.setLocation(center.getX() - major, center.getY() - minor);
 			Point second = new Point();
 			second.setLocation(center.getX() + major, center.getY() - minor);
-//			EllipseModel ellipse = new EllipseModel(first, second);
-//			ellipse.setModel();
-//			Ellipse ellipseClone = ellipse.clone();
-//			copy.addEllipse(ellipseClone);
+			EllipseModel ellipse = new EllipseModel(first, second);
+			ellipse.setModel();
+			Ellipse ellipseClone = ellipse.clone();
+			copy.addEllipse(ellipseClone);
 //			System.out.println(ellipseClone);
 		}
 		return copy;
