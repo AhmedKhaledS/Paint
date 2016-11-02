@@ -82,7 +82,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private boolean undoPressed;
 	private boolean operationAfterRedo;
 	private boolean redoPressed;
-	public boolean deletePressed;
 
 	/** Whole data */
 	private Data shapes;
@@ -497,7 +496,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 		free = new Button("Free");
 		triangle = new Button("triangle");
 		delete = new Button("Delete");
-		deletePressed = true;
 		save = new Button("Save");
 		load = new Button("Load");
 		Undo = new Button("Undo");
@@ -572,8 +570,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 		delete.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				state = 'd';
-				deletePressed = true;
 				for (Node cur : paintPane.getChildren()) {
 					if (!(cur instanceof Canvas)) {
 						cur.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -581,12 +577,17 @@ public class JavaFX_DrawOnCanvas extends Application {
 							@Override
 							public void handle(MouseEvent arg0) {
 								paintPane.getChildren().remove(cur);
+								try {
+									redo.push(shapes.clone());
+								} catch (CloneNotSupportedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
 
 						});
 					}
 				}
-				System.out.println(deletePressed);
 			}
 		});
 		Undo.setOnAction(new EventHandler<ActionEvent>() {
