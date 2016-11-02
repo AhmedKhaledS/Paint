@@ -18,7 +18,7 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	private Color fillInColor;
 	private Color borderColor;
 	private double borderWidth;
-	
+	private Ellipse thisEllipse;
 	private double majorAxis;
 	private double minorAxis;
 	private Point secondPt, firstPt;
@@ -29,27 +29,34 @@ public class EllipseModel implements ShapeModel, Cloneable {
 		fillInColor = Color.TRANSPARENT;
 	}
 
-//	public double getMinorAxis() {
-//		return minorAxis;
-//	}
-//
-//	public void setMinorAxis(double minorAxis) {
-//		this.minorAxis = minorAxis;
-//	}
-//
-//	public double getMajorAxis() {
-//		return majorAxis;
-//	}
-//
-//	public void setMajorAxis(double majorAxis) {
-//		this.majorAxis = majorAxis;
-//	}
-
 	public EllipseModel(double d, double e, double xCent, double yCent) {
-		// TODO Auto-generated constructor stub
 		majorAxis = d;
 		minorAxis = e;
+//		firstPt = new Point();
 		firstPt.setLocation(xCent, yCent);
+//		secondPt = new Point();
+//		secondPt.setLocation(x, y);
+		fillInColor = Color.TRANSPARENT;
+	}
+	
+	public Ellipse clone () throws CloneNotSupportedException {
+		Ellipse ell = thisEllipse;
+		return ell;
+	}
+	
+	public void setModel() {
+		Point modifiedPoint = new Point();
+		modifiedPoint.setLocation(Math.max(0, secondPt.getX()),
+				Math.max(0, secondPt.getY()));
+		secondPt.setLocation(modifiedPoint);
+		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
+		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());
+		Ellipse ellipse = new Ellipse(firstPt.getX(), firstPt.getY(), majorAxis, minorAxis);
+		ellipse.setStroke(borderColor);
+		ellipse.setFill(fillInColor);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(ellipse);
+		thisEllipse = ellipse;
 	}
 
 	/**
@@ -57,7 +64,6 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @return Color fill in color
 	 * */
 	public Color getFillInColor() {
-		// TODO Auto-generated method stub
 		return fillInColor;
 	}
 
@@ -71,7 +77,6 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @return the border color
 	 * */
 	public Color getBorderColor() {
-		// TODO Auto-generated method stub
 		return borderColor;
 	}
 
@@ -80,7 +85,6 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @param color to be set as a border color
 	 * */
 	public void setBorderColor(Color color) {
-		// TODO Auto-generated method stub
 		borderColor = color;
 	}
 
@@ -89,7 +93,6 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @return double value indicating the width color
 	 * */
 	public double getBorderWidth() {
-		// TODO Auto-generated method stub
 		return borderWidth;
 	}
 
@@ -98,7 +101,6 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @param borderWidth the value to be set as border width
 	 * */
 	public void setBorderWidth(double borderWidth) {
-		// TODO Auto-generated method stub
 		borderWidth = this.borderWidth;
 	}
 
@@ -109,7 +111,9 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * */
 	public void drawEllipse(Pane paint, Canvas canvas, Data shapes) {
 		Point modifiedPoint = new Point();
-		modifiedPoint.setLocation(Math.max(0, secondPt.getX()), Math.max(0, secondPt.getY()));
+		secondPt = new Point();
+		modifiedPoint.setLocation(Math.max(0, secondPt.getX()),
+				Math.max(0, secondPt.getY()));
 		secondPt.setLocation(modifiedPoint);
 		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
 		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());

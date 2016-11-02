@@ -95,7 +95,7 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 		borderWidth = this.borderWidth;
 	}
 	
-	public Rectangle getClone() {
+	public Rectangle getClone() throws CloneNotSupportedException {
 		Rectangle clone = new Rectangle();
 		clone.setX(thisRectangle.getX());
 		clone.setY(thisRectangle.getY());

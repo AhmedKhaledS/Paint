@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import tryingJavaFX.Data;
 
-public class TriangleModel extends PolygonModel{
+public class TriangleModel extends PolygonModel implements Cloneable {
 
 	private Color fillInColor;
 	private Color borderColor;
@@ -22,6 +22,20 @@ public class TriangleModel extends PolygonModel{
 		point2 = p2;
 		point3 = p3;
 	}
+	
+	public Polygon clone() throws CloneNotSupportedException {
+		Polygon copy = new Polygon();
+		copy.getPoints().addAll(new Double[] {
+				point1.getX(), point1.getY(),
+			    point2.getX(), point2.getY(),
+			    point3.getX(), point3.getY()});
+		copy.setStroke(borderColor);
+		copy.setFill(Color.WHITE);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(copy);
+		return copy;
+	}
+	
 	/**
 	 * get fill color.
 	 * @return Color fill in color
@@ -45,7 +59,6 @@ public class TriangleModel extends PolygonModel{
 	 * @return the border color
 	 * */
 	public Color getBorderColor() {
-		// TODO Auto-generated method stub
 		return borderColor;
 	}
 
@@ -54,7 +67,6 @@ public class TriangleModel extends PolygonModel{
 	 * @param color to be set as a border color
 	 * */
 	public void setBorderColor(Color color) {
-		// TODO Auto-generated method stub
 		borderColor = color;
 	}
 
@@ -63,7 +75,6 @@ public class TriangleModel extends PolygonModel{
 	 * @return double value indicating the width color
 	 * */
 	public double getBorderWidth() {
-		// TODO Auto-generated method stub
 		return borderWidth;
 	}
 
@@ -72,7 +83,6 @@ public class TriangleModel extends PolygonModel{
 	 * @param borderWidth the value to be set as border width
 	 * */
 	public void setBorderWidth(double borderWidth) {
-		// TODO Auto-generated method stub
 		borderWidth = this.borderWidth;
 	}
 
@@ -81,7 +91,7 @@ public class TriangleModel extends PolygonModel{
 		triangle.getPoints().addAll(new Double[]{
 			    point1.getX(), point1.getY(),
 			    point2.getX(), point2.getY(),
-			    point3.getX(), point3.getY() });
+			    point3.getX(), point3.getY()});
 		triangle.setStroke(borderColor);
 		triangle.setFill(Color.WHITE);
 		MouseGestures drag = new MouseGestures();

@@ -17,7 +17,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
-public class LineModel extends PolygonModel {
+public class LineModel extends PolygonModel implements Cloneable{
 
 	private double length;
 	private double width;
@@ -45,6 +45,8 @@ public class LineModel extends PolygonModel {
 		} else {
 			line.setEndY(end.getY());
 		}
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(line);
 		thisLine = line;
 	}
 
@@ -79,7 +81,7 @@ public class LineModel extends PolygonModel {
 		width = borderWidth;
 	}
 	
-	public Line getClone() {
+	public Line getClone() throws CloneNotSupportedException {
 		Line clone = new Line();
 		clone.setStartX(thisLine.getStartX());
 		clone.setStartY(thisLine.getStartY());

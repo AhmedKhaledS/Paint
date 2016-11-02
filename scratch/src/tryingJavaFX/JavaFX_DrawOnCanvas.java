@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Stack;
 
+import javax.swing.JOptionPane;
+
 import org.json.simple.parser.ParseException;
 
 import javafx.application.Application;
@@ -76,6 +78,11 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Stack<Data> undo;
 	/** number of buttons available. */
 	private final int NoOfButtons = 5;
+	private boolean operationAfterUndo;
+	private boolean undoPressed;
+	private boolean operationAfterRedo;
+	private boolean redoPressed;
+
 	/** Whole data*/
 	private Data shapes;
 	/**
@@ -127,9 +134,14 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 **/
 	public void start(Stage primaryStage) {
 		redo = new Stack<Data>();
+		undo = new Stack<Data>();
 		shapes = new Data();
 		base = new Tools();
 		canvas = base.getCvs();
+		operationAfterUndo = false;
+		undoPressed = false;
+		redoPressed = false;
+		operationAfterRedo = false;
 		final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		paintPane = base.getPane();
 		colorPicker = base.getColorPicker();
@@ -190,7 +202,19 @@ public class JavaFX_DrawOnCanvas extends Application {
 						last.setLocation(event.getX(), event.getY());
 						triangleCtrl.setDimensions(befPrevious, previous, last);
 						triangleCtrl.draw(paintPane, colorPicker, shapes);
-						
+						try {
+							redo.push(shapes.clone());
+							////////////
+							if (undoPressed) {
+//								undo.clear();
+								undoPressed = false;
+							}
+							if (redoPressed) {
+								redoPressed = false;
+							}
+						} catch (CloneNotSupportedException e) {
+							e.printStackTrace();
+						}
 						befPrevious = null;
 						previous = null;
 						actionsCounter[3] = 0;
@@ -266,7 +290,19 @@ public class JavaFX_DrawOnCanvas extends Application {
 					current.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setLastPoint(current);
 					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes);
-					redo.push(shapes.clone());
+					try {
+						redo.push(shapes.clone());
+						if (undoPressed) {
+//							undo.clear();
+							undoPressed = false;
+						}
+						if (redoPressed) {
+							
+							redoPressed = false;
+						}
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
 					firstRX.setValue(0);
 					firstRY.setValue(0);
 					secondRX.setValue(0);
@@ -278,6 +314,18 @@ public class JavaFX_DrawOnCanvas extends Application {
 					current.setLocation(event.getX(), event.getY());
 					ellipseCtrl.setDimensions(previous, current);
 					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes);
+					try {
+						redo.push(shapes.clone());
+						if (undoPressed) {
+//							undo.clear();
+							undoPressed = false;
+						}
+						if (redoPressed) {
+							redoPressed = false;
+						}
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
 					firstX.setValue(0);
 					firstY.setValue(0);
 					secondX.setValue(0);
@@ -291,8 +339,19 @@ public class JavaFX_DrawOnCanvas extends Application {
 					lineCtrl.setEndPoint(end);
 					lineCtrl.drawLine(paintPane, shapes);
 					// update new line in our state(stack).
-					redo.push(shapes.clone());
-					System.out.println(redo);
+					try {
+						redo.push(shapes.clone());
+						if (undoPressed) {
+//							undo.clear();
+							undoPressed = false;
+						}
+						if (redoPressed) {
+							redoPressed = false;
+						}
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+//					System.out.println(redo);
 					firstX.setValue(0);
 					firstY.setValue(0);
 					secondX.setValue(0);
@@ -505,6 +564,58 @@ public class JavaFX_DrawOnCanvas extends Application {
 				state = 'd';
 				clearActions(actionsCounter);
 				paint.toBack();
+			}
+		});
+		Undo.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				if (!redo.isEmpty()) {
+					undo.push(redo.peek());
+					redo.pop();
+//					undoPressed = true;
+					// here we update the pane!
+					paintPane.getChildren().clear();
+					paintPane.getChildren().add(canvas);
+					if (!redo.isEmpty()) {
+						// Updating reference to the new pane..
+						try {
+							shapes = redo.peek().clone();
+						} catch (CloneNotSupportedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					} else {
+						// will be changed yet..
+						shapes = new Data();
+					}
+					shapes.updatePane(paintPane);
+				} else {
+					JOptionPane.showMessageDialog(null, "Nothing to be undoed!",
+							 "Undo error!",
+							 JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		Redo.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				if (!undo.isEmpty()) {
+					redo.push(undo.peek());
+					undo.pop();
+					redoPressed = true;					
+					paintPane.getChildren().clear();
+					paintPane.getChildren().add(canvas);
+					if (!redo.isEmpty()) {
+						shapes = redo.peek();
+					} else {
+						shapes = new Data();
+					}
+					shapes.updatePane(paintPane);
+				} else {
+					JOptionPane.showMessageDialog(null, "Nothing to be redoed!",
+							 "Redo error!",
+							 JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
 //		save.setOnAction(new EventHandler<ActionEvent>() {
