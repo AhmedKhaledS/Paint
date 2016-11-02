@@ -20,8 +20,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import tryingJavaFX.Check;
-import tryingJavaFX.JavaFX_DrawOnCanvas;
 //import simplermouseinteraction.Resizer;
 
 public class MouseGestures {
@@ -36,15 +34,6 @@ public class MouseGestures {
 	EventHandler<MouseEvent> circleOnMousePressedEventHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
-			JavaFX_DrawOnCanvas access = new JavaFX_DrawOnCanvas();
-			Check check =  access.getDeleteStatus();
-			System.out.println(check.bool);
-			if (check.bool) {
-				if (t.getSource() == null) {
-					
-				}
-				check.pane.getChildren().remove(t.getSource());
-			}
 			state = "lu";
 			resize = false;
 			inX = new SimpleDoubleProperty();
