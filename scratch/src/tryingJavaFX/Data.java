@@ -33,7 +33,6 @@ public class Data implements Cloneable {
 	public Data clone() throws CloneNotSupportedException {
 		Data copy = new Data();
 		for (int i = 0; i < lines.size(); i++) {
-//			System.out.println(lines.get(i));
 			Line currentLine = lines.get(i);
 			Point start = new Point();
 			start.setLocation(currentLine.getStartX(), currentLine.getStartY());
@@ -44,7 +43,6 @@ public class Data implements Cloneable {
 			copy.addLine(cloneLine);
 		}
 		for (int i = 0; i < triangles.size(); i++) {
-//			System.out.println(triangles.get(i));
 			Polygon currentTriangle = triangles.get(i);
 			Point first = new Point();
 			Point second = new Point();
@@ -62,14 +60,13 @@ public class Data implements Cloneable {
 					i1++;
 				}
 			}
-//			System.out.println(first + "\n" + second + "\n" + third);
 			TriangleModel triangle = new TriangleModel(first, second, third);
 			triangle.setBorderColor((Color)currentTriangle.getStroke());
+			triangle.setFillInColor((Color)currentTriangle.getFill());
 			Polygon triangleClone = triangle.clone();
 			copy.addTriangle(triangleClone);
 		}
 		for (int i = 0; i < rectangles.size(); i++) {
-//			System.out.println(rectangles.get(i));
 			Rectangle currentRect = rectangles.get(i);
 			Point upperLeft = new Point();
 			upperLeft.setLocation(currentRect.getX(), currentRect.getY());
@@ -80,6 +77,7 @@ public class Data implements Cloneable {
 			RectangleModel rectangle = new RectangleModel(upperLeft, bottomRight);
 			rectangle.setProperties();
 			rectangle.setBorderColor((Color)currentRect.getStroke());
+			rectangle.setFillInColor((Color)currentRect.getFill());
 			Rectangle cloneRect = rectangle.getClone();
 			copy.addRectangle(cloneRect);
 		}

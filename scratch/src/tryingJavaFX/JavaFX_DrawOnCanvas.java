@@ -204,14 +204,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 						triangleCtrl.draw(paintPane, colorPicker, shapes);
 						try {
 							redo.push(shapes.clone());
-							////////////
-							if (undoPressed) {
-//								undo.clear();
-								undoPressed = false;
-							}
-							if (redoPressed) {
-								redoPressed = false;
-							}
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
@@ -292,14 +284,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes);
 					try {
 						redo.push(shapes.clone());
-						if (undoPressed) {
-//							undo.clear();
-							undoPressed = false;
-						}
-						if (redoPressed) {
-							
-							redoPressed = false;
-						}
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
@@ -316,13 +300,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes);
 					try {
 						redo.push(shapes.clone());
-						if (undoPressed) {
-//							undo.clear();
-							undoPressed = false;
-						}
-						if (redoPressed) {
-							redoPressed = false;
-						}
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
@@ -572,7 +549,6 @@ public class JavaFX_DrawOnCanvas extends Application {
 				if (!redo.isEmpty()) {
 					undo.push(redo.peek());
 					redo.pop();
-//					undoPressed = true;
 					// here we update the pane!
 					paintPane.getChildren().clear();
 					paintPane.getChildren().add(canvas);
