@@ -37,11 +37,14 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ShapeModels.*;
 
 public class JavaFX_DrawOnCanvas extends Application {
 
+	/**.*/
+	FileChooser fileChooser;
 	/** Color Picker to choose colors from. */
 	private ColorPicker colorPicker;
 	/** Button to insert a new Rectangle. */
@@ -459,6 +462,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 */
 	private void setCanvas(Canvas cvs, Pane pntPne, Stage primaryStage) {
 		Group root = new Group();
+		fileChooser = new FileChooser();
 		initializeButtons();
 		buttonActions(cvs);
 		pntPne.getChildren().add(cvs);
@@ -640,32 +644,32 @@ public class JavaFX_DrawOnCanvas extends Application {
 				}
 			}
 		});
-		// save.setOnAction(new EventHandler<ActionEvent>() {
-		//
-		// @Override
-		// public void handle(ActionEvent arg0) {
-		// data = new DataManipulation();
-		//// data.saveXML(base);
-		// try {
-		// data.saveJSON(canvas, paintPane, colorPicker, shapes);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		//
-		// });
-		// load.setOnAction(new EventHandler<ActionEvent>() {
-		//
-		// @Override
-		// public void handle(ActionEvent arg0) {
-		// try {
-		// data.loadJSON(canvas, paintPane, colorPicker);
-		// } catch (ParseException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		//
-		// });
+		save.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				data = new DataManipulation();
+				data.saveXML(shapes);
+			}
+		});
+		load.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				data = new DataManipulation();
+				Data loaded = new Data();
+				loaded = data.loadXML(canvas, paintPane, colorPicker, shapes);
+				try {
+					shapes = loaded.clone();
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//System.out.println(shapes.getSize());
+				shapes.updatePane(paintPane);
+			}
+
+		});
 	}
 
 	/**

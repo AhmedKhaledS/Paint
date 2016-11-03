@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import ShapeModels.EllipseModel;
 import ShapeModels.LineModel;
+import ShapeModels.MouseGestures;
 import ShapeModels.RectangleModel;
 import ShapeModels.TriangleModel;
 import javafx.collections.ObservableList;
@@ -102,17 +103,22 @@ public class Data implements Cloneable {
 		return copy;
 	}
 	
-	public void updatePane(Pane pane) {
+	public void updatePane(Pane pane) {		
+		MouseGestures drag = new MouseGestures();
 		for (Rectangle curr : rectangles) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 		for (Polygon curr : triangles) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 		for (Ellipse curr : ellipses) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 		for (Line curr : lines) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 	}
@@ -139,5 +145,8 @@ public class Data implements Cloneable {
 	}
 	public void setCanvasHeight(Double canvasHeight) {
 		CanvasHeight = canvasHeight;
+	}
+	public int getSize() {
+		return rectangles.size();
 	}
 }
