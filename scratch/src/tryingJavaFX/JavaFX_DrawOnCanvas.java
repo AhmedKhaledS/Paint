@@ -688,10 +688,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 
 			@Override
 			public void handle(ActionEvent arg0) {
-				//fileChooser.showOpenDialog(stage);
+				File file = fileChooser.showOpenDialog(stage);
 				data = new DataManipulation();
 				try {
-					data.saveJSON(jsonShapes, shapes);
+					data.saveJSON(jsonShapes, shapes, file);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -702,9 +702,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 
 			@Override
 			public void handle(ActionEvent arg0) {
+				File file = fileChooser.showOpenDialog(stage);
 				data = new DataManipulation();
 				Data loaded = new Data();
-				loaded = data.loadJSON(canvas, paintPane, colorPicker, shapes);
+				loaded = data.loadJSON(canvas, paintPane, colorPicker, shapes, file);
 				try {
 					shapes = loaded.clone();
 				} catch (CloneNotSupportedException e) {

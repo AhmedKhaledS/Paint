@@ -38,13 +38,12 @@ import org.apache.sling.commons.json.xml.XML;;
 
 public class DataManipulation {
 	
-	public void saveXML(Data shapes) {
+	public void saveXML(Data shapes, File file) {
 		Data data = new Data();
 		try {
 			data = shapes.clone();
 			XStream save = new XStream(new StaxDriver());
 			save.alias("Data", Data.class);
-			File file = new File("data.xml");
 			FileWriter writer;
 			try {
 				writer = new FileWriter(file);
@@ -66,8 +65,8 @@ public class DataManipulation {
 			e.printStackTrace();
 		}
 	}
-	public Data loadXML(Canvas canvas, Pane paintPane, ColorPicker colorPicker, Data shapes) {
-		File file = new File("data.xml");
+	public Data loadXML(Canvas canvas, Pane paintPane, ColorPicker colorPicker, Data shapes, File file) {
+		//File file = new File("data.xml");
 		try {
 			FileReader reader = new FileReader(file);
 			XStream load = new XStream(new StaxDriver());
@@ -87,7 +86,7 @@ public class DataManipulation {
 		}
 		return shapes;
 	}
-	public void saveJSON(JSONData shapes, Data shaps) throws IOException {
+	public void saveJSON(JSONData shapes, Data shaps, File file) throws IOException {
 		XStream save;  
 		JSONData data = new JSONData();
 		data = shapes.clone();
@@ -95,7 +94,6 @@ public class DataManipulation {
 		save = new XStream(new JettisonMappedXmlDriver());
 	    //save.setMode(XStream.NO_REFERENCES);
 	    save.alias("JSONData", JSONData.class);
-	        File file = new File("data.json");
 	        FileWriter writer = new FileWriter(file);
 	        try {
 	            if (!file.exists())
@@ -107,7 +105,7 @@ public class DataManipulation {
 	            e.printStackTrace();
 	        }
 	}
-	public Data loadJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes) {
+	public Data loadJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes, File file) {
 		XStream load;
 		load = new XStream(new JettisonMappedXmlDriver());
 		JSONData loaded = new JSONData();
@@ -115,7 +113,7 @@ public class DataManipulation {
         load.alias("JSONData", JSONData.class);
         FileReader reader;
         try {
-			reader = new FileReader("data.json");
+			reader = new FileReader(file);
 			loaded = (JSONData) load.fromXML(reader);
 			shapes = loaded.converToData();
 		} catch (FileNotFoundException e) {
