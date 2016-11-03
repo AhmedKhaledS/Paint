@@ -103,7 +103,7 @@ public class MouseGestures {
 						resize = false;
 					}
 				}
-				double rightToCenterX = ell.getCenterX() + ell.getRadiusX();
+				double rightToCenterX = ell.getCenterX() + ell.getRadiusX();	
 				double rightToCenterY = ell.getCenterY();
 				if (Math.abs(orgSceneX - rightToCenterX) < 20 && !found) {
 					if (Math.abs(orgSceneY - rightToCenterY) < 20) {

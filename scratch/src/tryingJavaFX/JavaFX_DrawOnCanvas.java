@@ -1,6 +1,7 @@
 package tryingJavaFX;
 
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Stack;
@@ -39,6 +40,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jsonShapesProperties.JSONData;
 import ShapeModels.*;
 
 public class JavaFX_DrawOnCanvas extends Application {
@@ -65,10 +67,12 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button dynamicLoad;
 	/** Button to delete Shapes. */
 	private Button delete;
-	/** Button to undp. */
+	/** Button to undo. */
 	private Button Undo;
 	/** Button for redo. */
 	private Button Redo;
+	/**Fill Color for shapes.*/
+	private Button fill;
 	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
 	/** point before the previous coordinates of the mouse on the canvas. */
@@ -86,6 +90,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private boolean operationAfterRedo;
 	private boolean redoPressed;
 
+	/**Whole data for JSON saving and loading.*/
+	private JSONData jsonShapes;
 	/** Whole data */
 	private Data shapes;
 	/**
@@ -146,6 +152,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 		redo = new Stack<Data>();
 		undo = new Stack<Data>();
 		shapes = new Data();
+		jsonShapes = new JSONData();
 		base = new Tools();
 		canvas = base.getCvs();
 		operationAfterUndo = false;
@@ -211,7 +218,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 						Point last = new Point();
 						last.setLocation(event.getX(), event.getY());
 						triangleCtrl.setDimensions(befPrevious, previous, last);
-						triangleCtrl.draw(paintPane, colorPicker, shapes);
+						triangleCtrl.draw(paintPane, colorPicker, shapes, jsonShapes);
 						try {
 							redo.push(shapes.clone());
 							////////////
@@ -299,7 +306,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setLastPoint(current);
-					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes);
+					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes, jsonShapes);
 					try {
 						redo.push(shapes.clone());
 						if (undoPressed) {
@@ -323,7 +330,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					ellipseCtrl.setDimensions(previous, current);
-					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes);
+					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes, jsonShapes);
 					try {
 						redo.push(shapes.clone());
 						if (undoPressed) {
@@ -347,7 +354,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point end = new Point();
 					end.setLocation(event.getX(), event.getY());
 					lineCtrl.setEndPoint(end);
-					lineCtrl.drawLine(paintPane, shapes);
+					lineCtrl.drawLine(paintPane, shapes, jsonShapes);
 					// update new line in our state(stack).
 					try {
 						redo.push(shapes.clone());
@@ -464,11 +471,11 @@ public class JavaFX_DrawOnCanvas extends Application {
 		Group root = new Group();
 		fileChooser = new FileChooser();
 		initializeButtons();
-		buttonActions(cvs);
+		buttonActions(cvs, primaryStage);
 		pntPne.getChildren().add(cvs);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
-		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo, delete);
+		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo, delete, fill);
 		VBox vBox = new VBox();
 		vBox.getChildren().addAll(hBox, pntPne);
 		root.getChildren().addAll(vBox);
@@ -500,17 +507,25 @@ public class JavaFX_DrawOnCanvas extends Application {
 		free = new Button("Free");
 		triangle = new Button("triangle");
 		delete = new Button("Delete");
+		fill = new Button("Fill");
 		save = new Button("Save");
 		load = new Button("Load");
 		Undo = new Button("Undo");
 		Redo = new Button("Redo");
+		fileChooser = new FileChooser();
+		fileChooser.setTitle("Open Resource File");
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("XML Files", "*.xml"),
+				new FileChooser.ExtensionFilter("JSON Files", "*.json")
+		);
+
 		Image rec = new Image("file:rect.png");
 	}
 
 	/**
 	 * sets action handlers for buttons.
 	 */
-	public void buttonActions(Canvas paint) {
+	public void buttonActions(Canvas paint, Stage stage) {
 		free.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -571,6 +586,31 @@ public class JavaFX_DrawOnCanvas extends Application {
 				previous = null;
 			}
 		});
+		fill.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				for(Node cur : paintPane.getChildren()) {
+					if (cur instanceof Canvas) {
+						continue;
+					}
+					cur.setOnMouseClicked(new EventHandler<MouseEvent>(){
+						@Override
+						public void handle(MouseEvent event) {
+							Shape s = (Shape) (cur);
+							s.setFill(colorPicker.getValue());
+							try {
+								//shapes.remove(cur);
+								redo.push(shapes.clone());
+							} catch (CloneNotSupportedException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			}
+			
+		});
 		delete.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -582,9 +622,9 @@ public class JavaFX_DrawOnCanvas extends Application {
 							public void handle(MouseEvent arg0) {
 								paintPane.getChildren().remove(cur);
 								try {
+									//shapes.remove(cur);
 									redo.push(shapes.clone());
 								} catch (CloneNotSupportedException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
@@ -648,8 +688,14 @@ public class JavaFX_DrawOnCanvas extends Application {
 
 			@Override
 			public void handle(ActionEvent arg0) {
+				//fileChooser.showOpenDialog(stage);
 				data = new DataManipulation();
-				data.saveXML(shapes);
+				try {
+					data.saveJSON(jsonShapes, shapes);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		load.setOnAction(new EventHandler<ActionEvent>() {
@@ -658,7 +704,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 			public void handle(ActionEvent arg0) {
 				data = new DataManipulation();
 				Data loaded = new Data();
-				loaded = data.loadXML(canvas, paintPane, colorPicker, shapes);
+				loaded = data.loadJSON(canvas, paintPane, colorPicker, shapes);
 				try {
 					shapes = loaded.clone();
 				} catch (CloneNotSupportedException e) {

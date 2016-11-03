@@ -3,6 +3,9 @@ package tryingJavaFX;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.Pane;
+import jsonShapesProperties.JSONData;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,10 +20,17 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONObject;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.xml.XML;;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 //
@@ -77,26 +87,22 @@ public class DataManipulation {
 		}
 		return shapes;
 	}
-	public void saveJSON(Data shapes) throws IOException {
+	public void saveJSON(JSONData shapes, Data shaps) throws IOException {
 		XStream save;  
-		Data data = new Data();
-		try {
-			data = shapes.clone();
-		} catch (CloneNotSupportedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		JSONData data = new JSONData();
+		data = shapes.clone();
+		//System.out.println(data.getSize());
 		save = new XStream(new JettisonMappedXmlDriver());
-	        save.setMode(XStream.NO_REFERENCES);
-	        save.alias("Data", Data.class);
+	    //save.setMode(XStream.NO_REFERENCES);
+	    save.alias("JSONData", JSONData.class);
 	        File file = new File("data.json");
 	        FileWriter writer = new FileWriter(file);
 	        try {
 	            if (!file.exists())
 	                file.createNewFile();
-	            writer = new FileWriter(file, false);
-	            writer.write(save.toXML(data));
-	            writer.close();
+				writer = new FileWriter(file, false);
+				writer.write(save.toXML(data));
+				writer.close();
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
@@ -104,23 +110,18 @@ public class DataManipulation {
 	public Data loadJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes) {
 		XStream load;
 		load = new XStream(new JettisonMappedXmlDriver());
-        load.alias("Data", Data.class);
-        FileReader fileReader;
+		JSONData loaded = new JSONData();
+		load.setMode(XStream.NO_REFERENCES);
+        load.alias("JSONData", JSONData.class);
+        FileReader reader;
         try {
-            fileReader = new FileReader("data.json");
-            Data loaded = new Data();
-            loaded = (Data) load.fromXML(fileReader);
-            try {
-				shapes = loaded.clone();
-				return shapes;
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-		return shapes;
+			reader = new FileReader("data.json");
+			loaded = (JSONData) load.fromXML(reader);
+			shapes = loaded.converToData();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return shapes;
 	}
 }

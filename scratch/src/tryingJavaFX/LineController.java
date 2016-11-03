@@ -2,6 +2,7 @@ package tryingJavaFX;
 
 import java.awt.Point;
 
+import jsonShapesProperties.JSONData;
 import ShapeModels.LineModel;
 import javafx.scene.layout.Pane;
 
@@ -26,8 +27,8 @@ public class LineController {
 		this.startPoint = previousPoint;
 	}
 	
-	public void drawLine(Pane paintPane, Data shapes) {
+	public void drawLine(Pane paintPane, Data shapes, JSONData json) {
 		LineModel line = new LineModel(startPoint, endPoint);
-		line.drawShape(paintPane, shapes);
+		line.drawShape(paintPane, shapes, json);
 	}
 }

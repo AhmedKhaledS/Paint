@@ -5,6 +5,7 @@ import java.awt.Point;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import jsonShapesProperties.JSONData;
 import tryingJavaFX.Data;
 
 public class TriangleModel extends PolygonModel implements Cloneable {
@@ -30,7 +31,7 @@ public class TriangleModel extends PolygonModel implements Cloneable {
 			    point2.getX(), point2.getY(),
 			    point3.getX(), point3.getY()});
 		copy.setStroke(borderColor);
-		copy.setFill(Color.WHITE);
+		copy.setFill(fillInColor);
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(copy);
 		return copy;
@@ -86,16 +87,17 @@ public class TriangleModel extends PolygonModel implements Cloneable {
 		borderWidth = this.borderWidth;
 	}
 
-	public void drawShape(Pane paint, Data shapes) {
+	public void drawShape(Pane paint, Data shapes, JSONData json) {
 		Polygon triangle =  new Polygon();
 		triangle.getPoints().addAll(new Double[]{
 			    point1.getX(), point1.getY(),
 			    point2.getX(), point2.getY(),
 			    point3.getX(), point3.getY()});
 		triangle.setStroke(borderColor);
-		triangle.setFill(Color.WHITE);
+		triangle.setFill(fillInColor);
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(triangle);
+		json.addTriangle(triangle);
 		shapes.addTriangle(triangle);
 		paint.getChildren().add(triangle);
 		return;

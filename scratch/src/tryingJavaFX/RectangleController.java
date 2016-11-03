@@ -2,6 +2,7 @@ package tryingJavaFX;
 
 import java.awt.Point;
 
+import jsonShapesProperties.JSONData;
 import ShapeModels.RectangleModel;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
@@ -28,12 +29,12 @@ public class RectangleController {
 		this.firstPt = firstPt;
 	}
 	
-	public void drawRectangle(Pane pntPane, Canvas cvs, ColorPicker clrPkr, Data shapes) {
+	public void drawRectangle(Pane pntPane, Canvas cvs, ColorPicker clrPkr, Data shapes, JSONData json) {
 		RectangleModel rectangle;
 		rectangle = new RectangleModel(firstPt, lastPoint);
 //		rectangle.setProperties();
 		rectangle.setBorderColor(clrPkr.getValue());
-		rectangle.drawRect(pntPane, cvs, shapes);
+		rectangle.drawRect(pntPane, cvs, shapes, json);
 //		RectangleModel x = (RectangleModel) rectangle.clone();
 	}
 	

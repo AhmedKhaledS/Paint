@@ -35,5 +35,7 @@
 	<classpathentry kind="lib" path="C:/Users/u s e r/Downloads/xstream-1.4.9/lib/xstream/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/u s e r/Downloads/xstream-1.4.9/lib/xstream/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="C:/Users/u s e r/Downloads/jettison-1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/u s e r/Downloads/org.apache.sling.commons.json-2.0.4-incubator.jar"/>
+	<classpathentry kind="lib" path="C:/Users/u s e r/Downloads/jackson-all-1.9.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -9,6 +9,7 @@ import ShapeModels.MouseGestures;
 import ShapeModels.RectangleModel;
 import ShapeModels.TriangleModel;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -66,6 +67,7 @@ public class Data implements Cloneable {
 //			System.out.println(first + "\n" + second + "\n" + third);
 			TriangleModel triangle = new TriangleModel(first, second, third);
 			triangle.setBorderColor((Color)currentTriangle.getStroke());
+			triangle.setFillInColor((Color) currentTriangle.getFill());
 			Polygon triangleClone = triangle.clone();
 			copy.addTriangle(triangleClone);
 		}
@@ -81,6 +83,7 @@ public class Data implements Cloneable {
 			RectangleModel rectangle = new RectangleModel(upperLeft, bottomRight);
 			rectangle.setProperties();
 			rectangle.setBorderColor((Color)currentRect.getStroke());
+			rectangle.setFillInColor((Color) currentRect.getFill());
 			Rectangle cloneRect = rectangle.getClone();
 			copy.addRectangle(cloneRect);
 		}
@@ -91,14 +94,14 @@ public class Data implements Cloneable {
 			Double major = currentEll.getRadiusX();
 			Double minor = currentEll.getRadiusY();
 			Point first = new Point();
-			first.setLocation(center.getX() - major, center.getY() - minor);
+			first.setLocation(center.getX(), center.getY());
 			Point second = new Point();
-			second.setLocation(center.getX() + major, center.getY() - minor);
+			second.setLocation(center.getX() + major , center.getY() - minor );
 			EllipseModel ellipse = new EllipseModel(first, second);
-			ellipse.setModel();
+			ellipse.setBorderColor((Color)currentEll.getStroke());
+			ellipse.setFillInColor((Color)currentEll.getFill());
 			Ellipse ellipseClone = ellipse.clone();
 			copy.addEllipse(ellipseClone);
-//			System.out.println(ellipseClone);
 		}
 		return copy;
 	}
@@ -148,5 +151,12 @@ public class Data implements Cloneable {
 	}
 	public int getSize() {
 		return rectangles.size();
+	}
+	public void remove(Node cur) {
+		for (Rectangle r : rectangles) {
+//			if (cur == r) {
+//				rectangles.remove(r);
+//			}
+		}
 	}
 }
