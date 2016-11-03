@@ -3,16 +3,15 @@ package jsonShapesProperties;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import Controllers.Data;
 import ShapeModels.MouseGestures;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import tryingJavaFX.Data;
 
-public class JSONData implements Cloneable{
-
+public class JSONData implements Cloneable {
 	private ArrayList<RectangleProperties> rectangles;
 	private ArrayList<LineProperties> lines;
 	private ArrayList<TriangleProperties> triangles;
@@ -116,7 +115,7 @@ public class JSONData implements Cloneable{
 			e.setCenterY(cur.getCenter().getY());
 			e.setRadiusX(cur.getRadiusX());
 			e.setRadiusY(cur.getRadiusY());
-			e.setStroke(cur.getStroke());
+			e.setStroke(Color.BLACK);
 			e.setFill(cur.getFill());
 			drag.makeDraggable(e);
 			shapes.addEllipse(e);

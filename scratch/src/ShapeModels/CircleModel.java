@@ -2,11 +2,14 @@ package ShapeModels;
 
 import java.awt.Point;
 
+import Controllers.Data;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import jsonShapesProperties.JSONData;
 
 public class CircleModel extends EllipseModel {
 
@@ -18,11 +21,13 @@ public class CircleModel extends EllipseModel {
 	private Point firstPt;
 	private Point secondPt;
 	public CircleModel(double radius, double xCent, double yCent) {
-		super(radius * 2, radius * 2, xCent, yCent);
+		super(radius , radius , xCent, yCent);
+		this.radius = radius;
+		
 	}
-	public CircleModel(Point firstPt, Point secondPt) {
-		super(firstPt, secondPt);
-	}
+//	public CircleModel(Point firstPt, Point secondPt) {
+//		super(firstPt, secondPt);
+//	}
 	public double getRadius() {
 		return radius;
 	}
@@ -72,7 +77,6 @@ public class CircleModel extends EllipseModel {
 	 * @return double value indicating the width color
 	 * */
 	public double getBorderWidth() {
-		// TODO Auto-generated method stub
 		return borderWidth;
 	}
 
@@ -81,7 +85,6 @@ public class CircleModel extends EllipseModel {
 	 * @param borderWidth the value to be set as border width
 	 * */
 	public void setBorderWidth(double borderWidth) {
-		// TODO Auto-generated method stub
 		borderWidth = this.borderWidth;
 	}
 
@@ -91,8 +94,10 @@ public class CircleModel extends EllipseModel {
 	 * @param event the mouse event that called the draw method
 	 * */
 	@Override
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
-		return;
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json) {
+		super.setBorderColor(this.borderColor);
+		super.setFillInColor(this.fillInColor);
+		super.drawShape(paint, canvas, shapes, json);
 	}
+
 }

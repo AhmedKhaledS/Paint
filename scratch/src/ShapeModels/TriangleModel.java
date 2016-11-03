@@ -2,11 +2,12 @@ package ShapeModels;
 
 import java.awt.Point;
 
+import Controllers.Data;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import jsonShapesProperties.JSONData;
-import tryingJavaFX.Data;
 
 public class TriangleModel extends PolygonModel implements Cloneable {
 
@@ -22,6 +23,8 @@ public class TriangleModel extends PolygonModel implements Cloneable {
 		point1 = p1;
 		point2 = p2;
 		point3 = p3;
+		fillInColor = Color.TRANSPARENT;
+		borderColor = Color.BLACK;
 	}
 	
 	public Polygon clone() throws CloneNotSupportedException {
@@ -86,8 +89,8 @@ public class TriangleModel extends PolygonModel implements Cloneable {
 	public void setBorderWidth(double borderWidth) {
 		borderWidth = this.borderWidth;
 	}
-
-	public void drawShape(Pane paint, Data shapes, JSONData json) {
+	@Override
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json) {
 		Polygon triangle =  new Polygon();
 		triangle.getPoints().addAll(new Double[]{
 			    point1.getX(), point1.getY(),
@@ -102,12 +105,4 @@ public class TriangleModel extends PolygonModel implements Cloneable {
 		paint.getChildren().add(triangle);
 		return;
 	}
-	@Override
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-
 }
