@@ -3,6 +3,9 @@ package tryingJavaFX;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.Pane;
+import jsonShapesProperties.JSONData;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,74 +20,106 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONObject;
 
-import com.google.gson.Gson;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.xml.XML;;
+//import org.json.simple.JSONObject;
+//import org.json.simple.parser.JSONParser;
+//
+//import com.google.gson.Gson;
 
 public class DataManipulation {
 	
-	public void saveXML(Tools tools) {
+	public void saveXML(Data shapes, File file) {
+		Data data = new Data();
 		try {
-			File file = new File("D:\\file.xml");
-//			File filePane = new File("D:\\Paint Project\\OOPPaint\\filePane.xml");
-//			File fileClrPicker = new File("D:\\Paint Project\\OOPPaint\\fileClrPicker.xml");
-			JAXBContext jaxbContext = JAXBContext.newInstance(Tools.class);
-//			JAXBContext jaxbContextPane = JAXBContext.newInstance(Tools.class);
-//			JAXBContext jaxbContextPicker = JAXBContext.newInstance(Tools.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-//			Marshaller jaxbMarshaller_pane = jaxbContextPane.createMarshaller();
-//			Marshaller jaxbMarshaller_picker = jaxbContextPicker.createMarshaller();
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//			jaxbMarshaller_pane.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//			jaxbMarshaller_picker.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal(tools, file);
-			jaxbMarshaller.marshal(tools, System.out);
-//			jaxbMarshaller_pane.marshal(pntPane, filePane);
-//			jaxbMarshaller_picker.marshal(clrPicker, fileClrPicker);
-		} catch (JAXBException e) {
-			 JOptionPane.showMessageDialog(null, "File is not found",
-					 "File exception: ",
-					 JOptionPane.INFORMATION_MESSAGE);
+			data = shapes.clone();
+			XStream save = new XStream(new StaxDriver());
+			save.alias("Data", Data.class);
+			FileWriter writer;
+			try {
+				writer = new FileWriter(file);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	        try {
+	            if (!file.exists())
+	                file.createNewFile();
+	            writer = new FileWriter(file, false);
+	            writer.write(save.toXML(data));
+	            writer.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	
-	public void loadXML(Canvas canvas, Pane paintPane, ColorPicker colorPicker) {
+	public Data loadXML(Canvas canvas, Pane paintPane, ColorPicker colorPicker, Data shapes, File file) {
+		//File file = new File("data.xml");
 		try {
-			File file = new File("D:\file.xml");
-//			File filePane = new File("D:\\Paint Project\\OOPPaint\\filePane.xml");
-//			File fileClrPicker = new File("D:\\Paint Project\\OOPPaint\\fileClrPicker.xml");
-			JAXBContext jaxbContext = JAXBContext.newInstance(Tools.class);
-//			JAXBContext jaxbContextPane = JAXBContext.newInstance(Tools.class);
-//			JAXBContext jaxbContextPicker = JAXBContext.newInstance(Tools.class);
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-//			Unmarshaller jaxbUnmarshaller_pane = jaxbContextPane.createUnmarshaller();
-//			Unmarshaller jaxbUnmarshaller_picker = jaxbContextPicker.createUnmarshaller();
-			Tools tools = (Tools)jaxbUnmarshaller.unmarshal(file);
-//			Canvas cvs
-//			Canvas cvs = (Canvas)jaxbUnmarshaller_cvs.unmarshal(fileCvs);
-//			Pane pntPane = (Pane)jaxbUnmarshaller_pane.unmarshal(filePane);
-//			ColorPicker clrPicker = (ColorPicker)jaxbUnmarshaller_picker.unmarshal(fileClrPicker);
-//			canvas = cvs;
-//			paintPane = pntPane;
-//			colorPicker = clrPicker;
-		} catch(JAXBException e) {
-			JOptionPane.showMessageDialog(null, "Error while saving.",
-					 "File exception: ",
-					 JOptionPane.INFORMATION_MESSAGE);
+			FileReader reader = new FileReader(file);
+			XStream load = new XStream(new StaxDriver());
+			load.alias("Data", Data.class);
+			Data loaded = new Data();
+			loaded = (Data) load.fromXML(reader);
+			try {
+				shapes = loaded.clone();
+				return shapes;
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
+		return shapes;
 	}
-	public void saveJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes) throws IOException {
-		Gson gson = new Gson();
-		ColorPicker clr = picker;
-		String json = gson.toJson(clr);
-		System.out.println(json);
-		gson.toJson(clr, new FileWriter("D:\\file.json"));
+	public void saveJSON(JSONData shapes, Data shaps, File file) throws IOException {
+		XStream save;  
+		JSONData data = new JSONData();
+		data = shapes.clone();
+		//System.out.println(data.getSize());
+		save = new XStream(new JettisonMappedXmlDriver());
+	    //save.setMode(XStream.NO_REFERENCES);
+	    save.alias("JSONData", JSONData.class);
+	        FileWriter writer = new FileWriter(file);
+	        try {
+	            if (!file.exists())
+	                file.createNewFile();
+				writer = new FileWriter(file, false);
+				writer.write(save.toXML(data));
+				writer.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
 	}
-	public void loadJSON(Canvas cvs, Pane pane, ColorPicker picker)
-			throws org.json.simple.parser.ParseException {
-
+	public Data loadJSON(Canvas cvs, Pane pane, ColorPicker picker, Data shapes, File file) {
+		XStream load;
+		load = new XStream(new JettisonMappedXmlDriver());
+		JSONData loaded = new JSONData();
+		load.setMode(XStream.NO_REFERENCES);
+        load.alias("JSONData", JSONData.class);
+        FileReader reader;
+        try {
+			reader = new FileReader(file);
+			loaded = (JSONData) load.fromXML(reader);
+			shapes = loaded.converToData();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return shapes;
 	}
 }

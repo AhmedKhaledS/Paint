@@ -9,6 +9,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -31,10 +32,8 @@ public class MouseGestures {
 	String state;
 	ObservableList<Double> list;
 	EventHandler<MouseEvent> circleOnMousePressedEventHandler = new EventHandler<MouseEvent>() {
-
 		@Override
 		public void handle(MouseEvent t) {
-
 			state = "lu";
 			resize = false;
 			inX = new SimpleDoubleProperty();
@@ -75,7 +74,7 @@ public class MouseGestures {
 				boolean found = false;
 				double aboveCenterX = ell.getCenterX();
 				double aboveCenterY = ell.getCenterY() - ell.getRadiusY();
-//				Resizer r1 = new Resizer(ell, aboveCenterX, aboveCenterY);
+				// Resizer r1 = new Resizer(ell, aboveCenterX, aboveCenterY);
 				if (Math.abs(orgSceneX - aboveCenterX) < 40) {
 					if (Math.abs(orgSceneY - aboveCenterY) < 40) {
 						resize = true;
@@ -85,7 +84,7 @@ public class MouseGestures {
 						ell.radiusXProperty().bind(inX);
 						inY.setValue(ell.getRadiusY());
 						ell.radiusYProperty().bind(inY);
-					} else  {
+					} else {
 						resize = false;
 					}
 				}
@@ -104,7 +103,7 @@ public class MouseGestures {
 						resize = false;
 					}
 				}
-				double rightToCenterX = ell.getCenterX() + ell.getRadiusX();
+				double rightToCenterX = ell.getCenterX() + ell.getRadiusX();	
 				double rightToCenterY = ell.getCenterY();
 				if (Math.abs(orgSceneX - rightToCenterX) < 20 && !found) {
 					if (Math.abs(orgSceneY - rightToCenterY) < 20) {
@@ -219,12 +218,44 @@ public class MouseGestures {
 				orgTranslateY = p.getTranslateY();
 
 			}
+			if (resize) {
+				Shape p = ((Shape) (t.getSource()));
+				// p.getParent().setCursor(Cursor.CROSSHAIR);
+			}
 		}
 	};
 
 	public void makeDraggable(Node node) {
 		node.setOnMousePressed(circleOnMousePressedEventHandler);
 		node.setOnMouseDragged(circleOnMouseDraggedEventHandler);
+		Shape shape = (Shape) (node);
+		Color previous = (Color) shape.getStroke();
+		node.setOnMouseEntered(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				shape.setStroke(Color.RED);
+				shape.getStrokeDashArray().addAll(3.0, 7.0, 3.0, 7.0);
+			}
+
+		});
+		node.setOnMouseExited(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				shape.setStroke(previous);
+				shape.getStrokeDashArray().clear();
+			}
+
+		});
+		node.setOnMouseDragReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				shape.getParent().setCursor(Cursor.HAND);
+			}
+
+		});
 	}
 
 	EventHandler<MouseEvent> circleOnMouseDraggedEventHandler = new EventHandler<MouseEvent>() {
@@ -240,7 +271,7 @@ public class MouseGestures {
 			if (t.getSource() instanceof Line) {
 				Line line = (Line) (t.getSource());
 				if (resize) {
-					//System.out.println(line.toString());
+					// System.out.println(line.toString());
 					inX.setValue(t.getSceneX());
 					inY.setValue(t.getSceneY());
 				} else {
@@ -256,6 +287,11 @@ public class MouseGestures {
 						inX.setValue(Math.abs(ell.getCenterX() - t.getSceneX()));
 						inY.setValue(Math.abs(ell.getCenterY() - t.getSceneY()));
 					}
+				} else {
+					Node p = ((Node) (t.getSource()));
+
+					p.setTranslateX(newTranslateX);
+					p.setTranslateY(newTranslateY);
 				}
 			} else if (t.getSource() instanceof Circle) {
 
@@ -306,10 +342,10 @@ public class MouseGestures {
 						sizeY.setValue((y + offsetY));
 					}
 				} else {
-					Rectangle rect = (Rectangle) (t.getSource());
+					Node p = ((Node) (t.getSource()));
 
-					rect.setTranslateX(newTranslateX);
-					rect.setTranslateY(newTranslateY);
+					p.setTranslateX(newTranslateX);
+					p.setTranslateY(newTranslateY);
 				}
 			} else if (t.getSource() instanceof Polygon) {
 				if (resize) {

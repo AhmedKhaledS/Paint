@@ -5,9 +5,11 @@ import java.util.ArrayList;
 
 import ShapeModels.EllipseModel;
 import ShapeModels.LineModel;
+import ShapeModels.MouseGestures;
 import ShapeModels.RectangleModel;
 import ShapeModels.TriangleModel;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -24,7 +26,7 @@ public class Data implements Cloneable {
 	private Double CanvasWidth;
 	private Double CanvasHeight;
 	
-	Data() {
+	public Data() {
 		rectangles = new ArrayList<Rectangle>();
 		triangles = new ArrayList<Polygon>();
 		ellipses = new ArrayList<Ellipse>();
@@ -33,6 +35,7 @@ public class Data implements Cloneable {
 	public Data clone() throws CloneNotSupportedException {
 		Data copy = new Data();
 		for (int i = 0; i < lines.size(); i++) {
+//			System.out.println(lines.get(i));
 			Line currentLine = lines.get(i);
 			Point start = new Point();
 			start.setLocation(currentLine.getStartX(), currentLine.getStartY());
@@ -43,6 +46,7 @@ public class Data implements Cloneable {
 			copy.addLine(cloneLine);
 		}
 		for (int i = 0; i < triangles.size(); i++) {
+//			System.out.println(triangles.get(i));
 			Polygon currentTriangle = triangles.get(i);
 			Point first = new Point();
 			Point second = new Point();
@@ -60,13 +64,15 @@ public class Data implements Cloneable {
 					i1++;
 				}
 			}
+//			System.out.println(first + "\n" + second + "\n" + third);
 			TriangleModel triangle = new TriangleModel(first, second, third);
 			triangle.setBorderColor((Color)currentTriangle.getStroke());
-			triangle.setFillInColor((Color)currentTriangle.getFill());
+			triangle.setFillInColor((Color) currentTriangle.getFill());
 			Polygon triangleClone = triangle.clone();
 			copy.addTriangle(triangleClone);
 		}
 		for (int i = 0; i < rectangles.size(); i++) {
+//			System.out.println(rectangles.get(i));
 			Rectangle currentRect = rectangles.get(i);
 			Point upperLeft = new Point();
 			upperLeft.setLocation(currentRect.getX(), currentRect.getY());
@@ -77,7 +83,7 @@ public class Data implements Cloneable {
 			RectangleModel rectangle = new RectangleModel(upperLeft, bottomRight);
 			rectangle.setProperties();
 			rectangle.setBorderColor((Color)currentRect.getStroke());
-			rectangle.setFillInColor((Color)currentRect.getFill());
+			rectangle.setFillInColor((Color) currentRect.getFill());
 			Rectangle cloneRect = rectangle.getClone();
 			copy.addRectangle(cloneRect);
 		}
@@ -88,29 +94,34 @@ public class Data implements Cloneable {
 			Double major = currentEll.getRadiusX();
 			Double minor = currentEll.getRadiusY();
 			Point first = new Point();
-			first.setLocation(center.getX() - major, center.getY() - minor);
+			first.setLocation(center.getX(), center.getY());
 			Point second = new Point();
-			second.setLocation(center.getX() + major, center.getY() - minor);
-//			EllipseModel ellipse = new EllipseModel(first, second);
-//			ellipse.setModel();
-//			Ellipse ellipseClone = ellipse.clone();
-//			copy.addEllipse(ellipseClone);
-//			System.out.println(ellipseClone);
+			second.setLocation(center.getX() + major , center.getY() - minor );
+			EllipseModel ellipse = new EllipseModel(first, second);
+			ellipse.setBorderColor((Color)currentEll.getStroke());
+			ellipse.setFillInColor((Color)currentEll.getFill());
+			Ellipse ellipseClone = ellipse.clone();
+			copy.addEllipse(ellipseClone);
 		}
 		return copy;
 	}
 	
-	public void updatePane(Pane pane) {
+	public void updatePane(Pane pane) {		
+		MouseGestures drag = new MouseGestures();
 		for (Rectangle curr : rectangles) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 		for (Polygon curr : triangles) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 		for (Ellipse curr : ellipses) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 		for (Line curr : lines) {
+			drag.makeDraggable(curr);
 			pane.getChildren().add(curr);
 		}
 	}
@@ -137,5 +148,15 @@ public class Data implements Cloneable {
 	}
 	public void setCanvasHeight(Double canvasHeight) {
 		CanvasHeight = canvasHeight;
+	}
+	public int getSize() {
+		return rectangles.size();
+	}
+	public void remove(Node cur) {
+		for (Rectangle r : rectangles) {
+//			if (cur == r) {
+//				rectangles.remove(r);
+//			}
+		}
 	}
 }

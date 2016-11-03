@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import jsonShapesProperties.JSONData;
 
 public class EllipseModel implements ShapeModel, Cloneable {
 
@@ -40,9 +41,20 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	}
 	
 	public Ellipse clone () throws CloneNotSupportedException {
-		Ellipse ell = thisEllipse;
-		return ell;
+//		Point modifiedPoint = new Point();
+//		modifiedPoint.setLocation(Math.max(0, secondPt.getX()),
+//				Math.max(0, secondPt.getY()));
+//		secondPt.setLocation(modifiedPoint);
+		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
+		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());
+		Ellipse ellipse = new Ellipse(firstPt.getX(), firstPt.getY(), majorAxis, minorAxis);
+		ellipse.setStroke(borderColor);
+		ellipse.setFill(fillInColor);
+		MouseGestures drag = new MouseGestures();
+		drag.makeDraggable(ellipse);
+		return ellipse;
 	}
+
 	
 	public void setModel() {
 		Point modifiedPoint = new Point();
@@ -109,11 +121,12 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	public void drawEllipse(Pane paint, Canvas canvas, Data shapes) {
+	public void drawEllipse(Pane paint, Canvas canvas, Data shapes, JSONData json) {
+		//handling the ellipse going out of the canvas
 		Point modifiedPoint = new Point();
-		secondPt = new Point();
-		modifiedPoint.setLocation(Math.max(0, secondPt.getX()),
+		modifiedPoint.setLocation(Math.max(0.0, secondPt.getX()),
 				Math.max(0, secondPt.getY()));
+		secondPt = new Point();
 		secondPt.setLocation(modifiedPoint);
 		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
 		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());
@@ -122,6 +135,7 @@ public class EllipseModel implements ShapeModel, Cloneable {
 		ellipse.setFill(fillInColor);
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(ellipse);
+		json.addEllipse(ellipse);
 		shapes.addEllipse(ellipse);
 		paint.getChildren().add(ellipse);
 	}

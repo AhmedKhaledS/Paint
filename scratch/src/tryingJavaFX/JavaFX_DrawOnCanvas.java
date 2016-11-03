@@ -1,13 +1,14 @@
 package tryingJavaFX;
 
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
-import org.json.simple.parser.ParseException;
+//import org.json.simple.parser.ParseException;
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -37,11 +38,15 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jsonShapesProperties.JSONData;
 import ShapeModels.*;
 
 public class JavaFX_DrawOnCanvas extends Application {
 
+	/**.*/
+	FileChooser fileChooser;
 	/** Color Picker to choose colors from. */
 	private ColorPicker colorPicker;
 	/** Button to insert a new Rectangle. */
@@ -62,17 +67,19 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private Button dynamicLoad;
 	/** Button to delete Shapes. */
 	private Button delete;
-	/** Button to undp.*/
+	/** Button to undo. */
 	private Button Undo;
 	/** Button for redo. */
 	private Button Redo;
+	/**Fill Color for shapes.*/
+	private Button fill;
 	/** previous coordinates of the mouse on the canvas. */
 	private Point previous;
 	/** point before the previous coordinates of the mouse on the canvas. */
 	private Point befPrevious;
 	/** array of counters of clicks made in each mode. */
 	private int[] actionsCounter;
-	/** Stack for normal operations.*/
+	/** Stack for normal operations. */
 	private Stack<Data> redo;
 	/** Stack for undo operations. */
 	private Stack<Data> undo;
@@ -83,49 +90,52 @@ public class JavaFX_DrawOnCanvas extends Application {
 	private boolean operationAfterRedo;
 	private boolean redoPressed;
 
-	/** Whole data*/
+	/**Whole data for JSON saving and loading.*/
+	private JSONData jsonShapes;
+	/** Whole data */
 	private Data shapes;
 	/**
 	 * state of the current drawing mode(rectangle, line, free sketching, etc.).
 	 */
 	private char state;
-	/**preview rectangle upper left X coordinate.*/
+	/** preview rectangle upper left X coordinate. */
 	private SimpleDoubleProperty rectX;
-	/**preview rectangle upper left Y coordinate.*/
+	/** preview rectangle upper left Y coordinate. */
 	private SimpleDoubleProperty rectY;
-	/**preview line start point x coordinate.*/
+	/** preview line start point x coordinate. */
 	private SimpleDoubleProperty linefx;
-	/**preview line start point y coordinate.*/
+	/** preview line start point y coordinate. */
 	private SimpleDoubleProperty linefy;
-	/**preview line end point x coordinate.*/
+	/** preview line end point x coordinate. */
 	private SimpleDoubleProperty linesx;
-	/**preview line end point y coordinate.*/
+	/** preview line end point y coordinate. */
 	private SimpleDoubleProperty linesy;
-	/**preview shapes movable values.*/
+	/** preview shapes movable values. */
 	private SimpleDoubleProperty firstX, firstRX;
-	/**preview shapes movable values.*/
+	/** preview shapes movable values. */
 	private SimpleDoubleProperty firstY, firstRY;
-	/**preview shapes movable values.*/
+	/** preview shapes movable values. */
 	private SimpleDoubleProperty secondX, secondRX;
-	/**preview shapes movable values.*/
+	/** preview shapes movable values. */
 	private SimpleDoubleProperty secondY, secondRY;
-	/**preview shapes movable values.*/
+	/** preview shapes movable values. */
 	private SimpleDoubleProperty width, widthR;
-	/**preview shapes movable values.*/
+	/** preview shapes movable values. */
 	private SimpleDoubleProperty length, lengthR;
-	/**preview rectangle.*/
+	/** preview rectangle. */
 	private Rectangle previewRect;
-	/**preview line.*/
+	/** preview line. */
 	private Line previewLine;
-	/**preview ellipse.*/
+	/** preview ellipse. */
 	private Ellipse previewEllipse;
-	/** required for I/O operations.*/
+	/** required for I/O operations. */
 	private DataManipulation data;
-	/** Pane to draw shapes on.*/
+	/** Pane to draw shapes on. */
 	private Pane paintPane;
 	/** Canvas to draw on. */
 	private Canvas canvas;
 	private Tools base;
+
 	/**
 	 * Initializes the drawing environment.
 	 * 
@@ -133,9 +143,16 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            stage at which all components are appended
 	 **/
 	public void start(Stage primaryStage) {
+		try {
+			Class.forName("tryingJavaFX.Data");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		redo = new Stack<Data>();
 		undo = new Stack<Data>();
 		shapes = new Data();
+		jsonShapes = new JSONData();
 		base = new Tools();
 		canvas = base.getCvs();
 		operationAfterUndo = false;
@@ -201,9 +218,17 @@ public class JavaFX_DrawOnCanvas extends Application {
 						Point last = new Point();
 						last.setLocation(event.getX(), event.getY());
 						triangleCtrl.setDimensions(befPrevious, previous, last);
-						triangleCtrl.draw(paintPane, colorPicker, shapes);
+						triangleCtrl.draw(paintPane, colorPicker, shapes, jsonShapes);
 						try {
 							redo.push(shapes.clone());
+							////////////
+							if (undoPressed) {
+								// undo.clear();
+								undoPressed = false;
+							}
+							if (redoPressed) {
+								redoPressed = false;
+							}
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
@@ -281,9 +306,17 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					rectangleCtrl.setLastPoint(current);
-					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes);
+					rectangleCtrl.drawRectangle(paintPane, canvas, colorPicker, shapes, jsonShapes);
 					try {
 						redo.push(shapes.clone());
+						if (undoPressed) {
+							// undo.clear();
+							undoPressed = false;
+						}
+						if (redoPressed) {
+
+							redoPressed = false;
+						}
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
@@ -297,9 +330,16 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point current = new Point();
 					current.setLocation(event.getX(), event.getY());
 					ellipseCtrl.setDimensions(previous, current);
-					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes);
+					ellipseCtrl.draw(paintPane, canvas, colorPicker, shapes, jsonShapes);
 					try {
 						redo.push(shapes.clone());
+						if (undoPressed) {
+							// undo.clear();
+							undoPressed = false;
+						}
+						if (redoPressed) {
+							redoPressed = false;
+						}
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
@@ -314,12 +354,12 @@ public class JavaFX_DrawOnCanvas extends Application {
 					Point end = new Point();
 					end.setLocation(event.getX(), event.getY());
 					lineCtrl.setEndPoint(end);
-					lineCtrl.drawLine(paintPane, shapes);
+					lineCtrl.drawLine(paintPane, shapes, jsonShapes);
 					// update new line in our state(stack).
 					try {
 						redo.push(shapes.clone());
 						if (undoPressed) {
-//							undo.clear();
+							// undo.clear();
 							undoPressed = false;
 						}
 						if (redoPressed) {
@@ -328,7 +368,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
-//					System.out.println(redo);
+					// System.out.println(redo);
 					firstX.setValue(0);
 					firstY.setValue(0);
 					secondX.setValue(0);
@@ -429,22 +469,25 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 */
 	private void setCanvas(Canvas cvs, Pane pntPne, Stage primaryStage) {
 		Group root = new Group();
+		fileChooser = new FileChooser();
 		initializeButtons();
-		buttonActions(cvs);
+		buttonActions(cvs, primaryStage);
 		pntPne.getChildren().add(cvs);
 		HBox hBox = new HBox();
 		hBox.getChildren().add(colorPicker);
-		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo);
+		hBox.getChildren().addAll(free, line, ellipse, rectangle, triangle, save, load, Undo, Redo, delete, fill);
 		VBox vBox = new VBox();
 		vBox.getChildren().addAll(hBox, pntPne);
 		root.getChildren().addAll(vBox);
 		Scene scene = new Scene(root, 700, 725);
 		primaryStage.setTitle("Vector Drawing");
 		primaryStage.setScene(scene);
+		primaryStage.setMaximized(true);
 		primaryStage.show();
 	}
 
 	/**
+	 * 
 	 * Clears the actions array.
 	 * 
 	 * @param array
@@ -464,17 +507,25 @@ public class JavaFX_DrawOnCanvas extends Application {
 		free = new Button("Free");
 		triangle = new Button("triangle");
 		delete = new Button("Delete");
+		fill = new Button("Fill");
 		save = new Button("Save");
 		load = new Button("Load");
 		Undo = new Button("Undo");
 		Redo = new Button("Redo");
+		fileChooser = new FileChooser();
+		fileChooser.setTitle("Open Resource File");
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("XML Files", "*.xml"),
+				new FileChooser.ExtensionFilter("JSON Files", "*.json")
+		);
+
 		Image rec = new Image("file:rect.png");
 	}
 
 	/**
 	 * sets action handlers for buttons.
 	 */
-	public void buttonActions(Canvas paint) {
+	public void buttonActions(Canvas paint, Stage stage) {
 		free.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -506,8 +557,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 				previewRect = new Rectangle();
 				previewRect.setStroke(Color.BLACK);
 				previewRect.setFill(Color.WHITE);
-				//previewRect.xProperty().bind(firstRX);
-				//previewRect.yProperty().bind(firstRY);
+				// previewRect.xProperty().bind(firstRX);
+				// previewRect.yProperty().bind(firstRY);
 				previewRect.widthProperty().bind(widthR);
 				previewRect.heightProperty().bind(lengthR);
 			}
@@ -535,12 +586,52 @@ public class JavaFX_DrawOnCanvas extends Application {
 				previous = null;
 			}
 		});
+		fill.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				for(Node cur : paintPane.getChildren()) {
+					if (cur instanceof Canvas) {
+						continue;
+					}
+					cur.setOnMouseClicked(new EventHandler<MouseEvent>(){
+						@Override
+						public void handle(MouseEvent event) {
+							Shape s = (Shape) (cur);
+							s.setFill(colorPicker.getValue());
+							try {
+								//shapes.remove(cur);
+								redo.push(shapes.clone());
+							} catch (CloneNotSupportedException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			}
+			
+		});
 		delete.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				state = 'd';
-				clearActions(actionsCounter);
-				paint.toBack();
+				for (Node cur : paintPane.getChildren()) {
+					if (!(cur instanceof Canvas)) {
+						cur.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+							@Override
+							public void handle(MouseEvent arg0) {
+								paintPane.getChildren().remove(cur);
+								try {
+									//shapes.remove(cur);
+									redo.push(shapes.clone());
+								} catch (CloneNotSupportedException e) {
+									e.printStackTrace();
+								}
+							}
+
+						});
+					}
+				}
 			}
 		});
 		Undo.setOnAction(new EventHandler<ActionEvent>() {
@@ -549,6 +640,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 				if (!redo.isEmpty()) {
 					undo.push(redo.peek());
 					redo.pop();
+					// undoPressed = true;
 					// here we update the pane!
 					paintPane.getChildren().clear();
 					paintPane.getChildren().add(canvas);
@@ -566,9 +658,8 @@ public class JavaFX_DrawOnCanvas extends Application {
 					}
 					shapes.updatePane(paintPane);
 				} else {
-					JOptionPane.showMessageDialog(null, "Nothing to be undoed!",
-							 "Undo error!",
-							 JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Nothing to be undone!", "Undo error!",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
@@ -578,7 +669,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 				if (!undo.isEmpty()) {
 					redo.push(undo.peek());
 					undo.pop();
-					redoPressed = true;					
+					redoPressed = true;
 					paintPane.getChildren().clear();
 					paintPane.getChildren().add(canvas);
 					if (!redo.isEmpty()) {
@@ -588,38 +679,44 @@ public class JavaFX_DrawOnCanvas extends Application {
 					}
 					shapes.updatePane(paintPane);
 				} else {
-					JOptionPane.showMessageDialog(null, "Nothing to be redoed!",
-							 "Redo error!",
-							 JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Nothing to be redone!", "Redo error!",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
-//		save.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//				data = new DataManipulation();
-////				data.saveXML(base);
-//				try {
-//					data.saveJSON(canvas, paintPane, colorPicker, shapes);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			
-//		});
-//		load.setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//				try {
-//					data.loadJSON(canvas, paintPane, colorPicker);
-//				} catch (ParseException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			
-//		});
+		save.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				File file = fileChooser.showOpenDialog(stage);
+				data = new DataManipulation();
+				try {
+					data.saveJSON(jsonShapes, shapes, file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		load.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				File file = fileChooser.showOpenDialog(stage);
+				data = new DataManipulation();
+				Data loaded = new Data();
+				loaded = data.loadJSON(canvas, paintPane, colorPicker, shapes, file);
+				try {
+					shapes = loaded.clone();
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//System.out.println(shapes.getSize());
+				shapes.updatePane(paintPane);
+			}
+
+		});
 	}
 
 	/**
@@ -629,7 +726,7 @@ public class JavaFX_DrawOnCanvas extends Application {
 	 *            the graphics content of the Scene
 	 */
 	private void initDraw(GraphicsContext gc) {
-//		colorPicker = new ColorPicker();
+		// colorPicker = new ColorPicker();
 		colorPicker.setValue(Color.BLACK);
 		double canvasWidth = gc.getCanvas().getWidth();
 		double canvasHeight = gc.getCanvas().getHeight();
@@ -650,8 +747,10 @@ public class JavaFX_DrawOnCanvas extends Application {
 		gc.setStroke(colorPicker.getValue());
 		gc.setLineWidth(1);
 	}
+
 	/**
 	 * main method.
+	 * 
 	 * @args needed of called from outside
 	 */
 	public static void main(String[] args) {

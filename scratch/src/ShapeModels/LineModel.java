@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineJoin;
+import jsonShapesProperties.JSONData;
 import tryingJavaFX.Data;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -93,7 +94,7 @@ public class LineModel extends PolygonModel implements Cloneable{
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
 	 * */
-	public void drawShape(Pane paint, Data shapes) {
+	public void drawShape(Pane paint, Data shapes, JSONData json) {
 		Line line = new Line();
 		line.setStartX(start.getX());
 		line.setStartY(start.getY());
@@ -114,6 +115,7 @@ public class LineModel extends PolygonModel implements Cloneable{
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(line);
 		paint.getChildren().add(line);
+		json.addLine(thisLine);
 		shapes.addLine(thisLine);
 		return;
 	}
