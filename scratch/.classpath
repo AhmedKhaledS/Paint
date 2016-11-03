@@ -6,8 +6,14 @@
 			<accessrule kind="accessible" pattern="javafx/**"/>
 		</accessrules>
 	</classpathentry>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="D:/GitHub/OOPPaint/scratch/jettison-1.2.jar"/>
 	<classpathentry kind="lib" path="D:/GitHub/OOPPaint/scratch/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="D:/GitHub/OOPPaint/scratch/xstream-1.4.9.jar"/>
+=======
+	<classpathentry kind="lib" path="C:/Users/Ahmed Khaled/Downloads/jettison-1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Ahmed Khaled/Downloads/xom-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Ahmed Khaled/Downloads/xstream-1.4.9.jar"/>
+>>>>>>> cfcda7af68108ddf88b9862b5e044def72077ba8
 	<classpathentry kind="output" path="bin"/>
 </classpath>
