@@ -1,4 +1,4 @@
-package tryingJavaFX;
+package Controllers;
 
 import java.awt.Point;
 
@@ -34,7 +34,7 @@ public class RectangleController {
 		rectangle = new RectangleModel(firstPt, lastPoint);
 //		rectangle.setProperties();
 		rectangle.setBorderColor(clrPkr.getValue());
-		rectangle.drawRect(pntPane, cvs, shapes, json);
+		rectangle.drawShape(pntPane, cvs, shapes, json);
 //		RectangleModel x = (RectangleModel) rectangle.clone();
 	}
 	

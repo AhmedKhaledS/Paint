@@ -3,6 +3,7 @@ package ShapeModels;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import Controllers.Data;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -10,7 +11,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import jsonShapesProperties.JSONData;
-import tryingJavaFX.Data;
 
 public class RectangleModel extends PolygonModel implements Cloneable {
 
@@ -115,7 +115,8 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	public void drawRect(Pane paint, Canvas canvas, Data shapes, JSONData json) {
+	@Override
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json) {
 		// TODO Auto-generated method stub
 		Rectangle rectangle = new Rectangle();
 		Point upperLeft = new Point();
@@ -155,10 +156,5 @@ public class RectangleModel extends PolygonModel implements Cloneable {
 		paint.getChildren().add(rectangle);
 	}
 
-	@Override
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

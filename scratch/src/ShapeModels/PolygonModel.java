@@ -1,8 +1,10 @@
 package ShapeModels;
 
+import Controllers.Data;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import jsonShapesProperties.JSONData;
 
 abstract public class PolygonModel implements ShapeModel {
 
@@ -33,5 +35,7 @@ abstract public class PolygonModel implements ShapeModel {
 	 * */
 	@Override
 	abstract public void setBorderWidth(double borderWidth);
+	@Override
+	abstract public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json);
 
 }

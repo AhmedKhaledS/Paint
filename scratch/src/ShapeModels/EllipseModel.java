@@ -4,8 +4,8 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 
-import tryingJavaFX.Data;
-import tryingJavaFX.EllipseController;
+import Controllers.Data;
+import Controllers.EllipseController;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -20,8 +20,8 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	private Color borderColor;
 	private double borderWidth;
 	private Ellipse thisEllipse;
-	private double majorAxis;
-	private double minorAxis;
+	protected double majorAxis;
+	protected double minorAxis;
 	private Point secondPt, firstPt;
 
 	public EllipseModel(Point firstPt, Point secondPt) {
@@ -33,10 +33,11 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	public EllipseModel(double d, double e, double xCent, double yCent) {
 		majorAxis = d;
 		minorAxis = e;
-//		firstPt = new Point();
+		firstPt = new Point();
 		firstPt.setLocation(xCent, yCent);
-//		secondPt = new Point();
-//		secondPt.setLocation(x, y);
+		secondPt = new Point();
+		secondPt.setLocation(firstPt.getX() + majorAxis,
+				firstPt.getY() + minorAxis);
 		fillInColor = Color.TRANSPARENT;
 	}
 	
@@ -121,7 +122,8 @@ public class EllipseModel implements ShapeModel, Cloneable {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	public void drawEllipse(Pane paint, Canvas canvas, Data shapes, JSONData json) {
+	@Override
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json) {
 		//handling the ellipse going out of the canvas
 		Point modifiedPoint = new Point();
 		modifiedPoint.setLocation(Math.max(0.0, secondPt.getX()),
@@ -130,6 +132,9 @@ public class EllipseModel implements ShapeModel, Cloneable {
 		secondPt.setLocation(modifiedPoint);
 		minorAxis = Math.abs(firstPt.getY() - secondPt.getY());
 		majorAxis = Math.abs(firstPt.getX() - secondPt.getX());
+		if (firstPt.getY() - minorAxis < 0) {
+			minorAxis = firstPt.getY();
+		}
 		Ellipse ellipse = new Ellipse(firstPt.getX(), firstPt.getY(), majorAxis, minorAxis);
 		ellipse.setStroke(borderColor);
 		ellipse.setFill(fillInColor);
@@ -138,11 +143,5 @@ public class EllipseModel implements ShapeModel, Cloneable {
 		json.addEllipse(ellipse);
 		shapes.addEllipse(ellipse);
 		paint.getChildren().add(ellipse);
-	}
-
-	@Override
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
-		
 	}
 }

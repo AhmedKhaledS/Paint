@@ -2,6 +2,7 @@ package ShapeModels;
 
 import java.awt.Point;
 
+import Controllers.Data;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -9,7 +10,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineJoin;
 import jsonShapesProperties.JSONData;
-import tryingJavaFX.Data;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -94,23 +94,17 @@ public class LineModel extends PolygonModel implements Cloneable{
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
 	 * */
-	public void drawShape(Pane paint, Data shapes, JSONData json) {
+	@Override
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json) {
 		Line line = new Line();
 		line.setStartX(start.getX());
 		line.setStartY(start.getY());
 		// canvas boundaries..
-		if (end.getX() > 699) {
-			line.setEndX(699);
-		} else {
-			line.setEndX(end.getX());			
-		}
+		line.setEndX(end.getX());			
 		if (end.getY() < 5) {
 			line.setEndY(5);
-		} else if (end.getY() > 799) {
-			line.setEndY(799);
-		} else {
-			line.setEndY(end.getY());
 		}
+		line.setEndY(end.getY());
 		thisLine = line;
 		MouseGestures drag = new MouseGestures();
 		drag.makeDraggable(line);
@@ -120,9 +114,4 @@ public class LineModel extends PolygonModel implements Cloneable{
 		return;
 	}
 
-	@Override
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
-		
-	}
 }

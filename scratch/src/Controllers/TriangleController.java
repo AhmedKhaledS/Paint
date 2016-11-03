@@ -1,9 +1,10 @@
-package tryingJavaFX;
+package Controllers;
 
 import java.awt.Point;
 
 import jsonShapesProperties.JSONData;
 import ShapeModels.TriangleModel;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.Pane;
 
@@ -15,9 +16,9 @@ public class TriangleController {
 		this.secondPoint = secondPoint;
 		this.thirdPoint = thirdPoint;
 	}
-	public void draw(Pane pntPane,ColorPicker colorPicker, Data shapes, JSONData json) {
+	public void draw(Pane pntPane,ColorPicker colorPicker,Canvas canvas, Data shapes, JSONData json) {
 		TriangleModel triangle = new TriangleModel(firstPoint, secondPoint, thirdPoint);
 		triangle.setBorderColor(colorPicker.getValue());
-		triangle.drawShape(pntPane, shapes, json);
+		triangle.drawShape(pntPane, canvas, shapes, json);
 	}
 }

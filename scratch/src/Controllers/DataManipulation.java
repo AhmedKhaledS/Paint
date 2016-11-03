@@ -1,36 +1,20 @@
-package tryingJavaFX;
+package Controllers;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.Pane;
 import jsonShapesProperties.JSONData;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.HashMap;
-
-import javax.swing.JOptionPane;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jettison.json.JSONObject;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.xml.XML;;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 //
@@ -86,6 +70,7 @@ public class DataManipulation {
 		}
 		return shapes;
 	}
+	@SuppressWarnings("resource")
 	public void saveJSON(JSONData shapes, Data shaps, File file) throws IOException {
 		XStream save;  
 		JSONData data = new JSONData();
@@ -117,7 +102,6 @@ public class DataManipulation {
 			loaded = (JSONData) load.fromXML(reader);
 			shapes = loaded.converToData();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return shapes;

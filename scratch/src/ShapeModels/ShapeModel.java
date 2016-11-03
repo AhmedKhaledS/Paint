@@ -1,10 +1,12 @@
 package ShapeModels;
 
+import Controllers.Data;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import jsonShapesProperties.JSONData;
 
 public interface ShapeModel extends Cloneable {
 	/**
@@ -35,5 +37,5 @@ public interface ShapeModel extends Cloneable {
 	 * draw shape using the canvas.
 	 * @param current the canvas to which painted materials will be appended
 	 * */
-	public void drawShape(Pane paint);
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json);
 }

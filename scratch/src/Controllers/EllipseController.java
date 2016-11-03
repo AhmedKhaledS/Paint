@@ -1,4 +1,4 @@
-package tryingJavaFX;
+package Controllers;
 
 import java.awt.Point;
 
@@ -20,6 +20,6 @@ public class EllipseController {
 		EllipseModel ellipse;
 		ellipse = new EllipseModel(startPoint, endPoint);
 		ellipse.setBorderColor(colorPicker.getValue());
-		ellipse.drawEllipse(pntPane, cvs, shapes, json);
+		ellipse.drawShape(pntPane, cvs, shapes, json);
 	}
 }

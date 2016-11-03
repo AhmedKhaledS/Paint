@@ -1,4 +1,4 @@
-package tryingJavaFX;
+package Controllers;
 
 import java.awt.Point;
 import java.util.ArrayList;

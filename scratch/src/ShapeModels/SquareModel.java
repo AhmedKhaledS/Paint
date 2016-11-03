@@ -3,11 +3,13 @@ package ShapeModels;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import Controllers.Data;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import jsonShapesProperties.JSONData;
 
 public class SquareModel extends RectangleModel {
 
@@ -54,7 +56,6 @@ public class SquareModel extends RectangleModel {
 	 * @return the border color
 	 * */
 	public Color getBorderColor() {
-		// TODO Auto-generated method stub
 		return borderColor;
 	}
 
@@ -63,7 +64,6 @@ public class SquareModel extends RectangleModel {
 	 * @param color to be set as a border color
 	 * */
 	public void setBorderColor(Color color) {
-		// TODO Auto-generated method stub
 		borderColor = color;
 	}
 
@@ -72,7 +72,6 @@ public class SquareModel extends RectangleModel {
 	 * @return double value indicating the width color
 	 * */
 	public double getBorderWidth() {
-		// TODO Auto-generated method stub
 		return borderWidth;
 	}
 
@@ -81,7 +80,6 @@ public class SquareModel extends RectangleModel {
 	 * @param borderWidth the value to be set as border width
 	 * */
 	public void setBorderWidth(double borderWidth) {
-		// TODO Auto-generated method stub
 		borderWidth = this.borderWidth;
 	}
 
@@ -90,9 +88,8 @@ public class SquareModel extends RectangleModel {
 	 * @param current the canvas to which painted materials will be appended
 	 * @param event the mouse event that called the draw method
 	 * */
-	@Override
-	public void drawShape(Pane paint) {
-		// TODO Auto-generated method stub
+	public void drawShape(Pane paint, Canvas canvas, Data shapes, JSONData json) {
+		super.drawShape(paint, canvas, shapes, json);
 		return;
 	}
 }

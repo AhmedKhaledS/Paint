@@ -1,4 +1,4 @@
-package tryingJavaFX;
+package Controllers;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -17,7 +17,7 @@ public class Tools {
 	private Pane pane;
 	private ColorPicker colorPicker;
 	Tools() {
-		cvs = new Canvas(700, 600);
+		cvs = new Canvas(1930, 970);
 		pane = new Pane();
 		colorPicker = new ColorPicker();
 	}
